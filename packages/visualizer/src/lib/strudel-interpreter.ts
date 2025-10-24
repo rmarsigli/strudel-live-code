@@ -1,5 +1,25 @@
 import type { PatternNode, AudioEvent, SoundType } from '../types/strudel-ast'
 
+/**
+ * Detects the type of sound based on its name
+ *
+ * Categorizes drum samples and synth sounds into types for visual rendering.
+ * This helps the visualizer display different colors/heights for different instruments.
+ *
+ * @param sound - The sound name (e.g., 'bd', 'sd', 'hh', 'bass', 'sawtooth')
+ * @returns The sound type category
+ *
+ * @internal
+ *
+ * @example
+ * ```ts
+ * detectSoundType('bd') // returns 'kick'
+ * detectSoundType('sd') // returns 'snare'
+ * detectSoundType('hh') // returns 'hihat'
+ * detectSoundType('bass') // returns 'bass'
+ * detectSoundType('unknown') // returns 'other'
+ * ```
+ */
 function detectSoundType(sound: string): SoundType {
   const s = sound.toLowerCase()
 
@@ -14,6 +34,32 @@ function detectSoundType(sound: string): SoundType {
   return 'other'
 }
 
+/**
+ * Generates a Euclidean rhythm pattern
+ *
+ * Euclidean rhythms distribute pulses as evenly as possible across a number of steps.
+ * This creates musically interesting polyrhythmic patterns.
+ *
+ * @param pulses - Number of hits/pulses in the rhythm
+ * @param steps - Total number of steps in the pattern
+ * @returns Boolean array where true = hit, false = rest
+ *
+ * @internal
+ *
+ * @example
+ * ```ts
+ * generateEuclideanRhythm(3, 8)
+ * // Returns: [true, false, false, true, false, false, true, false]
+ * // Represents the pattern: x..x..x.
+ * ```
+ *
+ * @example
+ * ```ts
+ * generateEuclideanRhythm(5, 8)
+ * // Returns: [true, false, true, true, false, true, true, false]
+ * // Represents the pattern: x.xx.xx.
+ * ```
+ */
 function generateEuclideanRhythm(pulses: number, steps: number): boolean[] {
   if (pulses >= steps) {
     return new Array(steps).fill(true)
@@ -38,6 +84,38 @@ function generateEuclideanRhythm(pulses: number, steps: number): boolean[] {
   return pattern
 }
 
+/**
+ * Interprets an AST into audio events for visualization
+ *
+ * This is the main interpreter function that traverses the AST and generates
+ * timed audio events that can be visualized. Each event contains:
+ * - Sound name and type
+ * - Timing information (when it plays and for how long)
+ * - Audio parameters (gain, speed, effects)
+ * - Sample index (for sample banks)
+ *
+ * @param ast - The pattern AST to interpret (from parser)
+ * @param _cps - Cycles per second / tempo (currently unused, reserved for future)
+ * @returns Array of AudioEvent objects sorted by time, ready for visualization
+ *
+ * @example
+ * ```ts
+ * const ast = parse('s("bd sd hh")')
+ * const events = interpret(ast.ast)
+ * // Returns: [
+ * //   { sound: 'bd', time: 0, duration: 0.33, type: 'kick', ... },
+ * //   { sound: 'sd', time: 0.33, duration: 0.33, type: 'snare', ... },
+ * //   { sound: 'hh', time: 0.66, duration: 0.33, type: 'hihat', ... }
+ * // ]
+ * ```
+ *
+ * @example
+ * ```ts
+ * const ast = parse('s("bd").gain(0.5).fast(2)')
+ * const events = interpret(ast.ast)
+ * // Events will have gain=0.5 and adjusted duration from fast(2)
+ * ```
+ */
 export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEvent[] {
   if (!ast) return []
 

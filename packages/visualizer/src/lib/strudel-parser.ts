@@ -1,6 +1,18 @@
 import type { Token, PatternNode, ParserContext, ParseResult, Modifier } from '../types/strudel-ast'
 import { tokenize } from './strudel-lexer'
 
+/**
+ * Parser class for converting tokens into an Abstract Syntax Tree (AST)
+ *
+ * The parser implements a recursive descent parser that understands Strudel's syntax:
+ * - Sound patterns: s("bd sd hh")
+ * - Stack composition: stack(s("bd"), s("sd"))
+ * - Cat/slowcat/fastcat sequencing
+ * - Modifiers: .fast(2), .gain(0.8), .room(0.3)
+ * - Mini-notation: silences (~), repetitions (*), sample selection (:), euclidean rhythms
+ *
+ * @internal
+ */
 class Parser {
   private context: ParserContext
 
@@ -401,6 +413,31 @@ class Parser {
   }
 }
 
+/**
+ * Parses Strudel code into an Abstract Syntax Tree (AST)
+ *
+ * This is the main entry point for parsing. It tokenizes the code and then
+ * builds an AST that represents the structure of the Strudel pattern.
+ *
+ * @param code - The Strudel code string to parse
+ * @returns ParseResult containing the AST, errors (if any), and success status
+ *
+ * @example
+ * ```ts
+ * const result = parse('s("bd sd hh")')
+ * if (result.success) {
+ *   console.log(result.ast) // PatternNode with type 'sequence'
+ * } else {
+ *   console.error(result.errors)
+ * }
+ * ```
+ *
+ * @example
+ * ```ts
+ * const result = parse('stack(s("bd"), s("sd")).fast(2)')
+ * // AST represents a stack with fast(2) modifier
+ * ```
+ */
 export function parse(code: string): ParseResult {
   const tokens = tokenize(code)
   const parser = new Parser(tokens)
