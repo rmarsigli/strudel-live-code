@@ -1,0 +1,12 @@
+src/
+tsconfig.json
+*.log
+node_modules/
+.DS_Store
+*.tgz
+
+# CLaude test generator
+CLAUDE.md
+
+# My personal tasks
+TODO.md

@@ -41,3 +41,8 @@ public/samples/*
 # Test coverage
 coverage
 .nyc_output
+
+# Package builds
+packages/*/dist
+packages/*/node_modules
+packages/*/*.tgz
