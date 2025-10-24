@@ -28,3 +28,11 @@ CLAUDE.md
 
 # My personal organizational file
 TODO.md
+
+# Samples (baixadas localmente)
+public/samples/dirt-samples
+public/samples/*
+!public/samples/.gitkeep
+
+# Environment
+.env

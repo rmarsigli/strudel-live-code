@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useFiles, useConnection } from '@/store'
 import { useFileOperations } from '@/hooks/use-file-operations'
 import { Button } from '@/components/ui/button'

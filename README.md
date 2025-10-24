@@ -1,18 +1,22 @@
 # Strudel Live Code
 
-Live code music with Strudel in your browser. Edit patterns in real-time and hear changes instantly.
+Strudel Live Code is a modern approach to live coding music with Strudel in your browser.
+
+Edit patterns in real-time and hear changes instantly.
 
 ## What is this?
 
-> This is a plug and play package, you don't need to know a lot of code, just git clone and run terminal commands.
+> This is a plug and play package, you don't need to know a lot of code, just git clone and run terminal commands. See the **Configuration** section for more info.
 
 A web-based music live coding tool powered by **[Strudel](https://strudel.cc)**. Write musical patterns using JavaScript-like syntax and create beats, melodies, and experimental sounds in real-time.
 
 ## Quick Start
 
 ```bash
-npm install
-npm run dev
+pnpm install
+cp .env.example .env
+pnpm run server   # Terminal 1
+pnpm run dev      # Terminal 2
 ```
 
 Open `http://localhost:5173` in your browser and start coding music!
@@ -38,8 +42,23 @@ stack(
 note('c4 e4 g4 e4').s('piano')
 ```
 
+## Configuration
+
+### Sample Loading
+
+By default, the app runs in **synths-only mode**. To add drum samples, download them:
+
+```bash
+pnpm run download-samples
+```
+
+The app will automatically detect and use local samples on next reload. No configuration needed!
+
+See [docs/samples-guide.md](./docs/samples-guide.md) for details.
+
 ## Learn More
 
 - [Strudel Documentation](https://strudel.cc/learn)
-- [Technical Details](./docs/architecture.md)
+- [Samples Configuration](./docs/samples-guide.md)
+- [Testing Guide](./docs/testing.md)
 - [GitHub](https://github.com/rmarsigli/strudel-live-code)

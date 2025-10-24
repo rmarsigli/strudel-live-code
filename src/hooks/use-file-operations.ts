@@ -91,7 +91,7 @@ export function useFileOperations() {
       ws.send(JSON.stringify(message))
       updateFile(filename, content)
     },
-    [ws, updateFile]
+    [ws, updateFile, showToast]
   )
 
   const requestFileList = useCallback(() => {

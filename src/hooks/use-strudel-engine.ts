@@ -4,16 +4,12 @@ import type { Pattern } from '@/types'
 
 declare global {
   interface Window {
-    strudel: {
-      evalScope: (code: string, scope?: Record<string, unknown>) => Promise<Pattern>
-      controls: Record<string, unknown>
-      samples: (url: string) => Promise<void>
-      repl: {
-        scheduler: {
-          setPattern: (pattern: Pattern, autostart?: boolean) => void
-          start: () => void
-          stop: () => void
-        }
+    strudel?: {
+      evaluate: (code: string) => Promise<Pattern>
+      scheduler: {
+        setPattern: (pattern: Pattern) => void
+        start: () => void
+        stop: () => void
       }
     }
   }
@@ -31,26 +27,37 @@ export function useStrudelEngine() {
     try {
       addLog('Initializing Strudel engine...')
 
-      if (!window.strudel) {
-        const strudel = await import('@strudel/core')
+      const { initStrudel, samples } = await import('@strudel/web')
 
-        window.strudel = {
-          evalScope: strudel.evalScope || strudel.default?.evalScope,
-          controls: strudel.controls || strudel.default?.controls || {},
-          samples: strudel.samples || strudel.default?.samples,
-          repl: strudel.repl || strudel.default?.repl,
-        }
-      }
+      const { evaluate, scheduler } = await initStrudel()
 
-      if (typeof window.strudel.samples === 'function') {
-        await window.strudel.samples('github:tidalcycles/Dirt-Samples')
-      } else {
-        addLog('Samples loading skipped (not available)', 'warn')
+      window.strudel = {
+        evaluate,
+        scheduler,
       }
 
       isInitializedRef.current = true
       addLog('Strudel engine initialized successfully')
-      showToast('Strudel engine ready', 'success')
+
+      try {
+        const checkUrl = `${window.location.origin}/samples/dirt-samples/strudel.json`
+        const response = await fetch(checkUrl, { method: 'HEAD' })
+
+        if (response.ok) {
+          addLog('Local samples detected, loading...')
+          await samples('/samples/dirt-samples', {
+            baseUrl: window.location.origin,
+          })
+          addLog('Local samples loaded successfully')
+          showToast('Strudel ready with local samples', 'success')
+        } else {
+          throw new Error('Samples not found')
+        }
+      } catch {
+        addLog('No local samples found (synths only mode)', 'info')
+        addLog('Run "pnpm run download-samples" to enable drum samples', 'info')
+        showToast('Strudel ready (synths only)', 'success')
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error'
       addLog(`Failed to initialize Strudel: ${message}`, 'error')
@@ -62,6 +69,10 @@ export function useStrudelEngine() {
   const evaluatePattern = useCallback(async (code: string) => {
     if (!isInitializedRef.current) {
       await initializeStrudel()
+    }
+
+    if (!window.strudel) {
+      throw new Error('Strudel not initialized')
     }
 
     try {
@@ -78,7 +89,7 @@ export function useStrudelEngine() {
         throw new Error('Empty pattern')
       }
 
-      const pattern = await window.strudel.evalScope(cleanCode, window.strudel.controls)
+      const pattern = await window.strudel.evaluate(cleanCode)
 
       currentPatternRef.current = pattern
       setPattern(pattern)
@@ -100,15 +111,19 @@ export function useStrudelEngine() {
         await initializeStrudel()
       }
 
+      if (!window.strudel) {
+        throw new Error('Strudel not initialized')
+      }
+
       let pattern = currentPatternRef.current
 
       if (!pattern && patternCode) {
         pattern = await evaluatePattern(patternCode)
       }
 
-      if (pattern && window.strudel?.repl?.scheduler) {
-        window.strudel.repl.scheduler.setPattern(pattern, true)
-        window.strudel.repl.scheduler.start()
+      if (pattern) {
+        window.strudel.scheduler.setPattern(pattern)
+        window.strudel.scheduler.start()
         setPlaybackState('playing')
         addLog('Playback started')
         showToast('Playing', 'success')
@@ -123,8 +138,8 @@ export function useStrudelEngine() {
 
   const stopPattern = useCallback(() => {
     try {
-      if (window.strudel?.repl?.scheduler) {
-        window.strudel.repl.scheduler.stop()
+      if (window.strudel?.scheduler) {
+        window.strudel.scheduler.stop()
         setPlaybackState('stopped')
         addLog('Playback stopped')
       }
@@ -145,13 +160,13 @@ export function useStrudelEngine() {
     } else {
       stopPattern()
     }
-  }, [isPlaying])
+  }, [isPlaying, playPattern, stopPattern])
 
   useEffect(() => {
-    if (window.strudel?.repl?.scheduler) {
-      const gainNode = (window.strudel.repl.scheduler as any).gainNode
-      if (gainNode) {
-        gainNode.gain.value = volume
+    if (window.strudel?.scheduler) {
+      const scheduler = window.strudel.scheduler as unknown as { gainNode?: GainNode }
+      if (scheduler.gainNode) {
+        scheduler.gainNode.gain.value = volume
       }
     }
   }, [volume])

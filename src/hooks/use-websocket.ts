@@ -6,7 +6,7 @@ import type { WSMessage } from '@/types'
 export function useWebSocket() {
   const { status, ws, setStatus, setWebSocket, incrementReconnectAttempts, resetReconnectAttempts, reconnectAttempts } = useConnection()
   const { showToast, addLog } = useUI()
-  const { setFiles, addFile, removeFile, updateFile, setCurrentFile } = useFiles()
+  const { setFiles, addFile, removeFile, updateFile } = useFiles()
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>()
 
   const connect = useCallback(() => {
@@ -129,7 +129,7 @@ export function useWebSocket() {
       console.error('Error creating WebSocket:', error)
       setStatus('error')
     }
-  }, [ws, setStatus, setWebSocket, reconnectAttempts, incrementReconnectAttempts, resetReconnectAttempts, showToast])
+  }, [ws, setStatus, setWebSocket, reconnectAttempts, incrementReconnectAttempts, resetReconnectAttempts, showToast, addLog, setFiles, addFile, removeFile, updateFile])
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -150,6 +150,7 @@ export function useWebSocket() {
     return () => {
       disconnect()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return {
