@@ -6,7 +6,7 @@ import type { WSMessage } from '@/types/websocket'
 
 export function useFileOperations() {
   const { ws } = useConnection()
-  const { addFile, removeFile, updateFile } = useFiles()
+  const { removeFile, updateFile } = useFiles()
   const { showToast } = useUI()
 
   const createFile = useCallback(
@@ -23,17 +23,9 @@ export function useFileOperations() {
       }
 
       ws.send(JSON.stringify(message))
-
-      addFile({
-        name: filename,
-        path: `patterns/${filename}`,
-        content,
-        lastModified: Date.now(),
-      })
-
       showToast(`File ${filename} created`, 'success')
     },
-    [ws, addFile, showToast]
+    [ws, showToast]
   )
 
   const deleteFile = useCallback(

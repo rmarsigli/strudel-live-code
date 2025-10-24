@@ -31,9 +31,15 @@ export const useFiles = create<FilesState>()(
 
         setLoading: (isLoading) => set({ isLoading }),
 
-        addFile: (file) => set((state) => ({
-          files: [...state.files, file]
-        })),
+        addFile: (file) => set((state) => {
+          const exists = state.files.some(f => f.name === file.name)
+          if (exists) {
+            return state
+          }
+          return {
+            files: [...state.files, file]
+          }
+        }),
 
         removeFile: (filename) => set((state) => ({
           files: state.files.filter(f => f.name !== filename),
