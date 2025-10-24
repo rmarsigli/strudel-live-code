@@ -3,8 +3,8 @@ import { useStrudel, useUI } from '@/store'
 
 export function useKeyboardShortcuts() {
   const { isPlaying, play, stop } = useStrudel()
-  const { toggleLogPanel } = useUI()
-  const playTimeoutRef = useRef<number>()
+  const toggleLogPanel = useUI(state => state.toggleLogPanel)
+  const playTimeoutRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

@@ -12,7 +12,7 @@ declare global {
         stop: () => void
         started?: boolean
       }
-      getAudioContext?: () => AudioContext
+      getAudioContext?: (() => AudioContext) | undefined
     }
   }
 }
@@ -49,7 +49,7 @@ export function useStrudelEngine() {
           const pattern = await window.strudel.evaluate(cleanCode)
 
           if (pattern) {
-            window.strudel.scheduler.setPattern(pattern, true)
+            window.strudel.scheduler.setPattern(pattern)
             currentPatternRef.current = pattern
           }
         } catch (error) {
@@ -80,14 +80,17 @@ export function useStrudelEngine() {
     try {
       addLog('Initializing Strudel engine...')
 
-      const { initStrudel, samples, getAudioContext } = await import('@strudel/web')
+      const { initStrudel, samples } = await import('@strudel/web')
 
       const { evaluate, scheduler } = await initStrudel()
+
+      const schedulerAny = scheduler as unknown as { audioContext?: AudioContext }
+      const audioContext = schedulerAny.audioContext
 
       window.strudel = {
         evaluate,
         scheduler,
-        getAudioContext,
+        getAudioContext: audioContext ? () => audioContext : undefined,
       }
 
       isInitializedRef.current = true
@@ -99,9 +102,8 @@ export function useStrudelEngine() {
 
         if (response.ok) {
           addLog('Local samples detected, loading...')
-          // Load strudel.json and manually register samples
           const samplesData = await fetch(samplesUrl).then((r) => r.json())
-          await samples(samplesData, `${window.location.origin}/samples/dirt-samples/`)
+          await samples(samplesData, { baseUrl: `${window.location.origin}/samples/dirt-samples/` })
           addLog('Local samples loaded successfully')
           showToast('Strudel ready with local samples', 'success')
         } else {
@@ -176,7 +178,7 @@ export function useStrudelEngine() {
         const pattern = await evaluatePattern(code, wasPlaying)
 
         if (pattern) {
-          window.strudel.scheduler.setPattern(pattern, wasPlaying)
+          window.strudel.scheduler.setPattern(pattern)
 
           if (!wasPlaying) {
             window.strudel.scheduler.start()
