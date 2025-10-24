@@ -294,29 +294,32 @@ docs/
 
 ---
 
-## Fase 8: Integração Strudel
+## Fase 8: Integração Strudel ✅
 
 ### 8.1 Inicialização
-- [ ] Carregar @strudel/core
-- [ ] Registrar ZZFX synth sounds
-- [ ] Carregar Dirt-Samples
-- [ ] Configurar Web Audio context
+- [x] `src/hooks/use-strudel-engine.ts` - Hook principal
+- [x] Carregar @strudel/core dinamicamente
+- [x] Carregar Dirt-Samples (GitHub)
+- [x] Inicialização automática no mount
+- [x] Logs de inicialização
 
 ---
 
 ### 8.2 Pattern Evaluation
-- [ ] Processar código (remover //, extrair $:)
-- [ ] evalScope com tratamento de erros
-- [ ] Capturar erros de sintaxe
-- [ ] Capturar erros de runtime
+- [x] Processar código (remover comentários)
+- [x] evalScope com tratamento de erros completo
+- [x] Capturar erros de sintaxe e runtime
+- [x] Mostrar erros via toast e logs
+- [x] Estados: loading, playing, stopped
 
 ---
 
 ### 8.3 Playback Control
-- [ ] Play com verificação de Audio Context
-- [ ] Stop e cleanup
-- [ ] Volume control
-- [ ] Prevenir múltiplos patterns simultâneos
+- [x] Play pattern com auto-inicialização
+- [x] Stop pattern e cleanup
+- [x] Volume control (0-100%)
+- [x] Integração com Zustand store
+- [x] Play/Stop via keyboard shortcuts
 
 ---
 
