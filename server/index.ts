@@ -77,12 +77,18 @@ wss.on('connection', (ws: WebSocket) => {
         }
 
         case 'rename-file': {
-          const { oldName, newName } = message.payload as { oldName: string; newName: string }
-          await fileManager.renameFile(oldName, newName)
+          const { oldFilename, newFilename } = message.payload as { oldFilename: string; newFilename: string }
+          await fileManager.renameFile(oldFilename, newFilename)
           broadcast({
             type: 'file-renamed',
-            payload: { oldName, newName },
+            payload: { oldFilename, newFilename },
           })
+          break
+        }
+
+        case 'save-file': {
+          const { filename, content } = message.payload as { filename: string; content: string }
+          await fileManager.writeFile(filename, content)
           break
         }
 

@@ -166,7 +166,7 @@ docs/
 ## Fase 5: Componentes Core ✅ (Básico implementado)
 
 ### 5.1 Layout Principal
-- [x] App.tsx - Container principal
+- [x] app.tsx - Container principal
   - [x] Header (título, status, GitHub link)
   - [x] Editor principal
   - [x] Control Panel (Play/Stop/Volume)

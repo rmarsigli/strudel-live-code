@@ -1,22 +1,33 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useStrudel, useFiles } from '@/store'
+import { useFileOperations } from '@/hooks/use-file-operations'
 import { DEBOUNCE_DELAY } from '@/lib/constants'
 
 export function PatternEditor() {
   const { patternCode, setPatternCode } = useStrudel()
   const { currentFile, updateFile } = useFiles()
+  const { saveFile } = useFileOperations()
+  const saveTimeoutRef = useRef<NodeJS.Timeout>()
 
   const handleChange = useCallback(
     (value: string) => {
       setPatternCode(value)
       if (currentFile) {
         updateFile(currentFile.name, value)
+
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current)
+        }
+
+        saveTimeoutRef.current = setTimeout(() => {
+          saveFile(currentFile.name, value)
+        }, DEBOUNCE_DELAY)
       }
     },
-    [setPatternCode, currentFile, updateFile]
+    [setPatternCode, currentFile, updateFile, saveFile]
   )
 
   useEffect(() => {
@@ -24,6 +35,14 @@ export function PatternEditor() {
       setPatternCode(currentFile.content)
     }
   }, [currentFile, setPatternCode])
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div className="flex h-full flex-col">

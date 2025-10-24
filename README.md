@@ -4,7 +4,9 @@ Live code music with Strudel in your browser. Edit patterns in real-time and hea
 
 ## What is this?
 
-A web-based music live coding tool powered by [Strudel](https://strudel.cc). Write musical patterns using JavaScript-like syntax and create beats, melodies, and experimental sounds in real-time.
+> This is a plug and play package, you don't need to know a lot of code, just git clone and run terminal commands.
+
+A web-based music live coding tool powered by **[Strudel](https://strudel.cc)**. Write musical patterns using JavaScript-like syntax and create beats, melodies, and experimental sounds in real-time.
 
 ## Quick Start
 

@@ -32,17 +32,21 @@ export function useStrudelEngine() {
       addLog('Initializing Strudel engine...')
 
       if (!window.strudel) {
-        const { evalScope, controls, samples, repl } = await import('@strudel/core')
+        const strudel = await import('@strudel/core')
 
         window.strudel = {
-          evalScope,
-          controls,
-          samples,
-          repl,
+          evalScope: strudel.evalScope || strudel.default?.evalScope,
+          controls: strudel.controls || strudel.default?.controls || {},
+          samples: strudel.samples || strudel.default?.samples,
+          repl: strudel.repl || strudel.default?.repl,
         }
       }
 
-      await window.strudel.samples('github:tidalcycles/Dirt-Samples')
+      if (typeof window.strudel.samples === 'function') {
+        await window.strudel.samples('github:tidalcycles/Dirt-Samples')
+      } else {
+        addLog('Samples loading skipped (not available)', 'warn')
+      }
 
       isInitializedRef.current = true
       addLog('Strudel engine initialized successfully')
