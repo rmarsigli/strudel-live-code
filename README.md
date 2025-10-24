@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./banner.png" alt="Strudel Live Code Banner" />
+</p>
+
 # Strudel Live Code
 
 Strudel Live Code is a modern approach to live coding music with Strudel in your browser.
