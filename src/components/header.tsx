@@ -24,7 +24,7 @@ export function Header() {
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-4">
           <h1 className="bg-gradient-to-r from-primary to-accent bg-clip-text text-2xl font-bold text-transparent">
-            Strudel Live Code
+            Strudel Studio
           </h1>
 
           <div className="flex items-center gap-2 text-sm">
@@ -44,7 +44,7 @@ export function Header() {
             asChild
           >
             <a
-              href="https://github.com/rmarsigli/strudel-live-code"
+              href="https://github.com/rmarsigli/strudel-studio"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2"

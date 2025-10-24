@@ -2,7 +2,7 @@
 
 ## Environment Variables
 
-Strudel Live Code uses environment variables to configure both the server and client.
+Strudel Studio uses environment variables to configure both the server and client.
 
 ### Setup
 

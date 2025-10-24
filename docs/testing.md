@@ -1,6 +1,6 @@
 # Testing Guide
 
-This guide explains the testing setup and how to run tests for the Strudel Live Code application.
+This guide explains the testing setup and how to run tests for the Strudel Studio application.
 
 ## Test Stack
 

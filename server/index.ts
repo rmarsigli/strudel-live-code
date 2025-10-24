@@ -126,7 +126,7 @@ fileManager.watchFiles((filename, content) => {
 })
 
 server.listen(PORT, () => {
-  console.log(`🎵 Strudel Live Code Server`)
+  console.log(`🎵 Strudel Studio Server`)
   console.log(`═══════════════════════════════════`)
   console.log(`📡 Server running on: http://localhost:${PORT}`)
   console.log(`🔌 WebSocket ready for connections`)

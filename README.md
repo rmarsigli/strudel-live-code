@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="./banner.png" alt="Strudel Live Code Banner" />
+  <img src="./banner.png" alt="Strudel Studio Banner" />
 </p>
 
-# Strudel Live Code
+# Strudel Studio
 
-Strudel Live Code is a modern approach to live coding music with Strudel in your browser.
+Strudel Studio is a modern approach to live coding music with Strudel in your browser.
 
 Edit patterns in real-time and hear changes instantly.
 
@@ -93,4 +93,4 @@ See [docs/samples-guide.md](./docs/samples-guide.md) for details.
 - [Configuration Guide](./docs/configuration.md)
 - [Samples Configuration](./docs/samples-guide.md)
 - [Testing Guide](./docs/testing.md)
-- [GitHub](https://github.com/rmarsigli/strudel-live-code)
+- [GitHub](https://github.com/rmarsigli/strudel-studio)
