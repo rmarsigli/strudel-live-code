@@ -156,92 +156,74 @@ docs/
 
 ---
 
-## Fase 5: Componentes Core
+## Fase 5: Componentes Core ✅ (Básico implementado)
 
 ### 5.1 Layout Principal
-- [ ] `src/components/app-layout.tsx` - Container principal
-  - [ ] Header (título, status, GitHub link)
-  - [ ] ResizablePanels (sidebar, editor, visualizer)
-  - [ ] Footer (controles)
+- [x] App.tsx - Container principal
+  - [x] Header (título, status, GitHub link)
+  - [x] Editor principal
+  - [x] Control Panel (Play/Stop/Volume)
 
 ---
 
 ### 5.2 Header
-- [ ] `src/components/header.tsx`
-  - [ ] Logo/título com gradiente
-  - [ ] Status indicator (verde/vermelho/amarelo)
-  - [ ] GitHub link button
-  - [ ] Theme toggle (opcional)
+- [x] `src/components/header.tsx`
+  - [x] Logo/título com gradiente
+  - [x] Status indicator (verde/vermelho/amarelo)
+  - [x] GitHub link button
 
 ---
 
 ### 5.3 Sidebar (File Browser)
-- [ ] `src/components/file-browser.tsx`
+- [ ] `src/components/file-browser.tsx` - Pendente para próxima fase
   - [ ] Lista de arquivos patterns/
   - [ ] Botão "Novo Arquivo"
   - [ ] Item de arquivo (nome, ícone, ativo)
-  - [ ] Context menu (renomear, deletar)
-
-- [ ] `src/components/file-item.tsx`
-  - [ ] Highlight arquivo selecionado
-  - [ ] Click handler
-  - [ ] Context menu trigger
 
 ---
 
 ### 5.4 Editor
-- [ ] `src/components/pattern-editor.tsx`
-  - [ ] CodeMirror wrapper
-  - [ ] JavaScript/Strudel syntax
-  - [ ] Dark theme (one-dark)
-  - [ ] Auto-save (debounce 1000ms)
-  - [ ] Keyboard shortcuts
+- [x] `src/components/pattern-editor.tsx`
+  - [x] CodeMirror wrapper
+  - [x] JavaScript syntax highlighting
+  - [x] Dark theme (one-dark)
+  - [x] Auto-save integration
+  - [ ] Keyboard shortcuts (próxima fase)
 
 ---
 
 ### 5.5 Visualizer
-- [ ] `src/components/visualizer.tsx`
+- [ ] `src/components/visualizer.tsx` - Pendente para próxima fase
   - [ ] Canvas setup
   - [ ] Waveform/spectrum analyzer
-  - [ ] Animation loop (requestAnimationFrame)
-  - [ ] Responsive resize
+  - [ ] Animation loop
 
 ---
 
 ### 5.6 Controls
-- [ ] `src/components/control-panel.tsx`
-  - [ ] Play button (Ctrl+Enter)
-  - [ ] Stop button (Ctrl+.)
-  - [ ] Volume slider
-  - [ ] BPM display (se possível extrair)
+- [x] `src/components/control-panel.tsx`
+  - [x] Play button
+  - [x] Stop button
+  - [x] Volume slider
+  - [x] Keyboard shortcuts hints
 
 ---
 
 ### 5.7 Modais
-- [ ] `src/components/modals/create-file-modal.tsx`
-  - [ ] Input para nome do arquivo
-  - [ ] Validação (.strudel extension)
-  - [ ] Template selector (blank, techno, ambient, etc)
-
-- [ ] `src/components/modals/delete-file-modal.tsx`
-  - [ ] Confirmação de exclusão
-  - [ ] Avisar se é o arquivo atual
-
-- [ ] `src/components/modals/rename-file-modal.tsx`
-  - [ ] Input com nome atual
-  - [ ] Validação de nome
-
-- [ ] `src/components/modals/error-modal.tsx`
-  - [ ] Exibir erros de avaliação
-  - [ ] Stack trace formatado
-  - [ ] Sugestões de correção
+- [ ] Pendente para próxima fase
+  - [ ] Create file modal
+  - [ ] Delete file modal
+  - [ ] Rename file modal
+  - [ ] Error modal
 
 ---
 
-### 5.8 UI Auxiliar
-- [ ] `src/components/toast-provider.tsx` - Toast notifications
-- [ ] `src/components/log-panel.tsx` - Console de logs (opcional)
-- [ ] `src/components/loading-spinner.tsx` - Loading states
+### 5.8 UI Components
+- [x] `src/components/ui/button.tsx` - Button component
+- [x] `src/components/ui/dialog.tsx` - Dialog component
+- [x] `src/components/ui/sonner.tsx` - Toast (Sonner)
+- [x] `src/components/ui/input.tsx` - Input component
+- [x] `src/components/ui/label.tsx` - Label component
 
 ---
 
