@@ -1137,6 +1137,17 @@ sound("bd:2 sd:0 hh:3:1")
 
 ## Log de Alterações
 
+### 2025-10-24 (Tarde - Sessão 4: Package @strudel-studio/visualizer)
+- ✅ **CRIADO**: Package npm separado `@strudel-studio/visualizer`
+- ✅ Estrutura completa: parser + lexer + interpreter + hook + componente React
+- ✅ TypeScript build configurado com tsup (CJS + ESM + types)
+- ✅ README completo com exemplos e API documentation
+- ✅ Package pronto para publicação no npm
+- ✅ .gitignore atualizado para excluir builds
+- ✅ Exports: StrudelVisualizer component + useStrudelVisualizer hook + parser utilities
+- ✅ Zero dependencies (apenas peerDeps: React 18+)
+- ✅ Build bem-sucedido: dist/ gerado com index.js, index.mjs, index.d.ts
+
 ### 2025-10-24 (Tarde - Sessão 3: Correções Críticas)
 - ✅ **CORRIGIDO**: Silêncios (`~ ~ ~ ~`) agora não geram barras no visualizador
 - ✅ **ADICIONADO**: Suporte para `!` (hold/repeat) - exemplo: `bd:5!2` toca bd:5 por 2 steps

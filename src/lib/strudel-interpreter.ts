@@ -28,34 +28,30 @@ function generateEuclideanRhythm(pulses: number, steps: number): boolean[] {
 
   let prev = -1
   for (let i = 0; i < steps; i++) {
-    if (bucket[i] !== prev) {
+    const currentBucket = bucket[i]
+    if (currentBucket !== undefined && currentBucket !== prev) {
       pattern[i] = true
-      prev = bucket[i]
+      prev = currentBucket
     }
   }
 
   return pattern
 }
 
-export function interpret(ast: PatternNode | null, cps: number = 0.5): AudioEvent[] {
+export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEvent[] {
   if (!ast) return []
 
   const events: AudioEvent[] = []
-  let globalCpm: number | null = null
 
   function traverseNode(node: PatternNode, baseTime: number = 0, baseDuration: number = 1, modifiers: AudioEvent['effects'] = {}): void {
     let gain = 1.0
     let speed = 1.0
-    let effects = { ...modifiers }
+    const effects = { ...modifiers }
 
     if (node.modifiers) {
       for (const modifier of node.modifiers) {
         switch (modifier.name) {
           case 'cpm': {
-            const cpmValue = typeof modifier.args[0] === 'number' ? modifier.args[0] : null
-            if (cpmValue) {
-              globalCpm = cpmValue
-            }
             break
           }
           case 'gain':
@@ -101,7 +97,7 @@ export function interpret(ast: PatternNode | null, cps: number = 0.5): AudioEven
           speed,
           effects,
           probability: node.weight ? node.weight / 10 : 1.0,
-          sampleIndex: node.sampleIndex
+          sampleIndex: node.sampleIndex ?? 0
         })
         break
       }

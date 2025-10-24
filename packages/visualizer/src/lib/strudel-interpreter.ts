@@ -42,26 +42,28 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
   if (!ast) return []
 
   const events: AudioEvent[] = []
-  const _globalCpm: number | null = null
 
   function traverseNode(node: PatternNode, baseTime: number = 0, baseDuration: number = 1, modifiers: AudioEvent['effects'] = {}): void {
     let gain = 1.0
     let speed = 1.0
-    let effects = { ...modifiers }
+    const effects = { ...modifiers }
 
     if (node.modifiers) {
       for (const modifier of node.modifiers) {
         switch (modifier.name) {
-          case 'cpm': {
+          case 'cpm':
+          case 'bpm':
             break
-          }
           case 'gain':
-            gain = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1.0
+          case 'velocity':
+            gain *= typeof modifier.args[0] === 'number' ? modifier.args[0] : 1.0
             break
           case 'speed':
-            speed = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1.0
+          case 'hurry':
+            speed *= typeof modifier.args[0] === 'number' ? modifier.args[0] : 1.0
             break
           case 'delay':
+          case 'echo':
             effects.delay = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
             break
           case 'room':
@@ -69,6 +71,24 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             break
           case 'cut':
             effects.cut = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'lpf':
+            effects.lpf = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'hpf':
+            effects.hpf = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'bandf':
+            effects.bandf = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'crush':
+            effects.crush = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'distort':
+            effects.distort = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'coarse':
+            effects.coarse = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
             break
           case 'fast': {
             const factor = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
@@ -80,6 +100,17 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             baseDuration = baseDuration * factor
             break
           }
+          case 'ply': {
+            const repeats = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
+            baseDuration = baseDuration / repeats
+            break
+          }
+          case 'stut': {
+            break
+          }
+          case 'every':
+          case 'whenmod':
+            break
         }
       }
     }
@@ -156,6 +187,43 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
         if (node.children) {
           for (const child of node.children) {
             traverseNode(child, baseTime, baseDuration, effects)
+          }
+        }
+        break
+      }
+
+      case 'cat': {
+        if (node.children) {
+          const stepDuration = baseDuration / node.children.length
+          let currentTime = baseTime
+
+          for (const child of node.children) {
+            traverseNode(child, currentTime, stepDuration, effects)
+            currentTime += stepDuration
+          }
+        }
+        break
+      }
+
+      case 'slowcat': {
+        if (node.children) {
+          const cycleIndex = Math.floor(baseTime / baseDuration) % node.children.length
+          const selectedChild = node.children[cycleIndex]
+          if (selectedChild) {
+            traverseNode(selectedChild, baseTime, baseDuration, effects)
+          }
+        }
+        break
+      }
+
+      case 'fastcat': {
+        if (node.children) {
+          const stepDuration = baseDuration / node.children.length
+          let currentTime = baseTime
+
+          for (const child of node.children) {
+            traverseNode(child, currentTime, stepDuration, effects)
+            currentTime += stepDuration
           }
         }
         break

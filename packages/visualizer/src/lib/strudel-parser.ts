@@ -52,7 +52,7 @@ class Parser {
         errors: this.context.errors,
         success: this.context.errors.length === 0
       }
-    } catch (error) {
+    } catch {
       return {
         ast: null,
         errors: this.context.errors,
@@ -66,6 +66,10 @@ class Parser {
 
     if (token.type === 'FUNCTION' && token.value === 'stack') {
       return this.parseStack()
+    }
+
+    if (token.type === 'FUNCTION' && (token.value === 'cat' || token.value === 'slowcat' || token.value === 'fastcat')) {
+      return this.parseCat()
     }
 
     if (token.type === 'FUNCTION' && (token.value === 'sound' || token.value === 's')) {
@@ -100,6 +104,37 @@ class Parser {
 
     return {
       type: 'stack',
+      children,
+      position: 0,
+      duration: 1,
+      modifiers: this.parseModifiers()
+    }
+  }
+
+  private parseCat(): PatternNode | null {
+    const funcToken = this.expect('FUNCTION')
+    if (!funcToken) return null
+
+    const catType = funcToken.value
+    this.expect('PAREN_START')
+
+    const children: PatternNode[] = []
+
+    while (this.currentToken().type !== 'PAREN_END' && this.currentToken().type !== 'EOF') {
+      const child = this.parseExpression()
+      if (child) {
+        children.push(child)
+      }
+
+      if (this.currentToken().type === 'COMMA') {
+        this.advance()
+      }
+    }
+
+    this.expect('PAREN_END')
+
+    return {
+      type: catType as 'cat' | 'slowcat' | 'fastcat',
       children,
       position: 0,
       duration: 1,

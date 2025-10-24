@@ -80,7 +80,11 @@ export function useStrudelEngine() {
     try {
       addLog('Initializing Strudel engine...')
 
-      const { initStrudel, samples, getAudioContext } = await import('@strudel/web')
+      const strudelWeb = await import('@strudel/web')
+      const { initStrudel, samples } = strudelWeb
+      const getAudioContext = ('getAudioContext' in strudelWeb && typeof strudelWeb.getAudioContext === 'function')
+        ? strudelWeb.getAudioContext as (() => AudioContext)
+        : undefined
 
       const { evaluate, scheduler } = await initStrudel()
 
@@ -101,7 +105,7 @@ export function useStrudelEngine() {
           addLog('Local samples detected, loading...')
           const samplesData = await fetch(samplesUrl).then((r) => r.json())
 
-          await samples(samplesData, '/samples/dirt-samples/')
+          await samples(samplesData, { baseUrl: '/samples/dirt-samples/' })
 
           addLog('Local samples loaded successfully')
           showToast('Strudel ready with local samples', 'success')

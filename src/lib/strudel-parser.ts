@@ -1,4 +1,4 @@
-import type { Token, PatternNode, ParserContext, ParseResult, ParserError, Modifier } from '@/types/strudel-ast'
+import type { Token, PatternNode, ParserContext, ParseResult, Modifier } from '@/types/strudel-ast'
 import { tokenize } from './strudel-lexer'
 
 class Parser {
@@ -13,7 +13,11 @@ class Parser {
   }
 
   private currentToken(): Token {
-    return this.context.tokens[this.context.position] || this.context.tokens[this.context.tokens.length - 1]
+    const token = this.context.tokens[this.context.position] || this.context.tokens[this.context.tokens.length - 1]
+    if (!token) {
+      return { type: 'EOF', value: '', position: 0, line: 0, column: 0 }
+    }
+    return token
   }
 
   private advance(): void {
@@ -48,7 +52,7 @@ class Parser {
         errors: this.context.errors,
         success: this.context.errors.length === 0
       }
-    } catch (error) {
+    } catch {
       return {
         ast: null,
         errors: this.context.errors,
@@ -213,7 +217,11 @@ class Parser {
     }
 
     if (children.length === 1) {
-      return children[0]
+      const singleChild = children[0]
+      if (singleChild) {
+        return singleChild
+      }
+      return null
     }
 
     return {

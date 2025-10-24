@@ -13,6 +13,7 @@ export function tokenize(code: string): Token[] {
 
   while (position < code.length) {
     const char = code[position]
+    if (char === undefined) break
 
     if (char === '\n') {
       line++
@@ -264,7 +265,9 @@ export function tokenize(code: string): Token[] {
       continue
     }
 
-    if (/\d/.test(char) || (char === '-' && /\d/.test(code[position + 1] || ''))) {
+    const nextCharForNumber = code[position + 1]
+    const isNegativeNumber = char === '-' && nextCharForNumber !== undefined && /\d/.test(nextCharForNumber)
+    if (/\d/.test(char) || isNegativeNumber) {
       const startPos = position
       const startCol = column
       let value = ''
@@ -275,8 +278,10 @@ export function tokenize(code: string): Token[] {
         column++
       }
 
-      while (position < code.length && /[\d.]/.test(code[position] || '')) {
-        value += code[position]
+      while (position < code.length) {
+        const currentChar = code[position]
+        if (currentChar === undefined || !/[\d.]/.test(currentChar)) break
+        value += currentChar
         position++
         column++
       }
@@ -296,8 +301,10 @@ export function tokenize(code: string): Token[] {
       const startCol = column
       let value = ''
 
-      while (position < code.length && /[a-zA-Z0-9_]/.test(code[position] || '')) {
-        value += code[position]
+      while (position < code.length) {
+        const currentChar = code[position]
+        if (currentChar === undefined || !/[a-zA-Z0-9_]/.test(currentChar)) break
+        value += currentChar
         position++
         column++
       }

@@ -7,8 +7,11 @@ export function tokenize(code: string): Token[] {
   let column = 1
 
   const keywords = new Set([
-    'sound', 's', 'stack', 'fast', 'slow', 'rev', 'gain', 'speed',
-    'delay', 'room', 'cut', 'every', 'jux', 'juxBy', 'bite', 'chop', 'cpm'
+    'sound', 's',
+    'stack', 'cat', 'slowcat', 'fastcat',
+    'fast', 'slow', 'cpm', 'bpm', 'every', 'whenmod', 'stut', 'echo', 'ply', 'hurry',
+    'gain', 'velocity', 'lpf', 'hpf', 'bandf', 'crush', 'distort', 'coarse',
+    'rev', 'speed', 'delay', 'room', 'cut', 'jux', 'juxBy', 'bite', 'chop'
   ])
 
   while (position < code.length) {

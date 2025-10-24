@@ -33,6 +33,9 @@ export interface Token {
 export type PatternNodeType =
   | 'sound'
   | 'stack'
+  | 'cat'
+  | 'slowcat'
+  | 'fastcat'
   | 'sequence'
   | 'subgroup'
   | 'alternation'
@@ -44,18 +47,31 @@ export type PatternNodeType =
 export type ModifierName =
   | 'fast'
   | 'slow'
-  | 'rev'
+  | 'cpm'
+  | 'bpm'
+  | 'every'
+  | 'whenmod'
+  | 'stut'
+  | 'echo'
+  | 'ply'
+  | 'hurry'
   | 'gain'
+  | 'velocity'
+  | 'lpf'
+  | 'hpf'
+  | 'bandf'
+  | 'crush'
+  | 'distort'
+  | 'coarse'
+  | 'rev'
   | 'speed'
   | 'delay'
   | 'room'
   | 'cut'
-  | 'every'
   | 'jux'
   | 'juxBy'
   | 'bite'
   | 'chop'
-  | 'cpm'
 
 export interface Modifier {
   name: ModifierName
@@ -91,6 +107,12 @@ export interface AudioEvent {
     delay?: number
     reverb?: number
     cut?: number
+    lpf?: number
+    hpf?: number
+    bandf?: number
+    crush?: number
+    distort?: number
+    coarse?: number
   }
   probability: number
   stereo?: 'left' | 'right' | 'center'
