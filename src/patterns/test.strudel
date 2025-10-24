@@ -1,0 +1,5 @@
+stack(
+  s('bd:5!2 bd:6 bd:5').speed(0.9),
+  s('~ cp:2 ~ cp:2').room(0.3),
+  s('[~ hh:3]*4').gain(0.5)
+).cpm(130/4)

@@ -10,7 +10,9 @@ declare global {
         setPattern: (pattern: Pattern) => void
         start: () => void
         stop: () => void
+        started?: boolean
       }
+      getAudioContext?: () => AudioContext
     }
   }
 }
@@ -20,6 +22,57 @@ export function useStrudelEngine() {
   const { addLog, showToast } = useUI()
   const isInitializedRef = useRef(false)
   const currentPatternRef = useRef<Pattern | null>(null)
+  const patternCodeRef = useRef(patternCode)
+  const isPlayingRef = useRef(isPlaying)
+  const updateTimeoutRef = useRef<number | undefined>(undefined)
+
+  useEffect(() => {
+    patternCodeRef.current = patternCode
+
+    if (isPlayingRef.current && isInitializedRef.current) {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current)
+      }
+
+      updateTimeoutRef.current = setTimeout(async () => {
+        try {
+          if (!window.strudel) return
+
+          const cleanCode = patternCode
+            .split('\n')
+            .filter(line => !line.trim().startsWith('//'))
+            .join('\n')
+            .trim()
+
+          if (!cleanCode) return
+
+          const pattern = await window.strudel.evaluate(cleanCode)
+
+          if (pattern) {
+            window.strudel.scheduler.setPattern(pattern, true)
+            currentPatternRef.current = pattern
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Unknown error'
+          console.error('Pattern update error:', message)
+        }
+      }, 100)
+    }
+  }, [patternCode])
+
+  const playPatternRef = useRef<(() => Promise<void>) | null>(null)
+  const stopPatternRef = useRef<(() => void) | null>(null)
+
+  useEffect(() => {
+    const wasPlaying = isPlayingRef.current
+    isPlayingRef.current = isPlaying
+
+    if (isPlaying && !wasPlaying && playPatternRef.current) {
+      playPatternRef.current()
+    } else if (!isPlaying && wasPlaying && stopPatternRef.current) {
+      stopPatternRef.current()
+    }
+  }, [isPlaying])
 
   const initializeStrudel = useCallback(async () => {
     if (isInitializedRef.current) return
@@ -27,13 +80,14 @@ export function useStrudelEngine() {
     try {
       addLog('Initializing Strudel engine...')
 
-      const { initStrudel, samples } = await import('@strudel/web')
+      const { initStrudel, samples, getAudioContext } = await import('@strudel/web')
 
       const { evaluate, scheduler } = await initStrudel()
 
       window.strudel = {
         evaluate,
         scheduler,
+        getAudioContext,
       }
 
       isInitializedRef.current = true
@@ -67,7 +121,8 @@ export function useStrudelEngine() {
     }
   }, [addLog, showToast])
 
-  const evaluatePattern = useCallback(async (code: string) => {
+
+  const evaluatePattern = useCallback(async (code: string, silent = false) => {
     if (!isInitializedRef.current) {
       await initializeStrudel()
     }
@@ -77,9 +132,6 @@ export function useStrudelEngine() {
     }
 
     try {
-      setPlaybackState('loading')
-      addLog(`Evaluating pattern...`)
-
       const cleanCode = code
         .split('\n')
         .filter(line => !line.trim().startsWith('//'))
@@ -95,12 +147,13 @@ export function useStrudelEngine() {
       currentPatternRef.current = pattern
       setPattern(pattern)
 
-      addLog('Pattern evaluated successfully')
       return pattern
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error'
-      addLog(`Pattern evaluation error: ${message}`, 'error')
-      showToast(`Pattern error: ${message}`, 'error')
+      if (!silent) {
+        addLog(`Pattern evaluation error: ${message}`, 'error')
+        showToast(`Pattern error: ${message}`, 'error')
+      }
       setPlaybackState('stopped')
       throw error
     }
@@ -116,18 +169,24 @@ export function useStrudelEngine() {
         throw new Error('Strudel not initialized')
       }
 
-      let pattern = currentPatternRef.current
+      const code = patternCodeRef.current
 
-      if (!pattern && patternCode) {
-        pattern = await evaluatePattern(patternCode)
-      }
+      if (code) {
+        const wasPlaying = window.strudel.scheduler.started
+        const pattern = await evaluatePattern(code, wasPlaying)
 
-      if (pattern) {
-        window.strudel.scheduler.setPattern(pattern)
-        window.strudel.scheduler.start()
-        setPlaybackState('playing')
-        addLog('Playback started')
-        showToast('Playing', 'success')
+        if (pattern) {
+          window.strudel.scheduler.setPattern(pattern, wasPlaying)
+
+          if (!wasPlaying) {
+            window.strudel.scheduler.start()
+            showToast('Playing', 'success')
+          }
+
+          setPlaybackState('playing')
+        }
+      } else {
+        throw new Error('No pattern code to evaluate')
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error'
@@ -135,7 +194,11 @@ export function useStrudelEngine() {
       showToast('Failed to start playback', 'error')
       setPlaybackState('stopped')
     }
-  }, [patternCode, evaluatePattern, initializeStrudel, setPlaybackState, addLog, showToast])
+  }, [evaluatePattern, initializeStrudel, setPlaybackState, addLog, showToast])
+
+  useEffect(() => {
+    playPatternRef.current = playPattern
+  }, [playPattern])
 
   const stopPattern = useCallback(() => {
     try {
@@ -152,16 +215,12 @@ export function useStrudelEngine() {
   }, [setPlaybackState, addLog])
 
   useEffect(() => {
-    initializeStrudel()
-  }, [initializeStrudel])
+    stopPatternRef.current = stopPattern
+  }, [stopPattern])
 
   useEffect(() => {
-    if (isPlaying) {
-      playPattern()
-    } else {
-      stopPattern()
-    }
-  }, [isPlaying, playPattern, stopPattern])
+    initializeStrudel()
+  }, [initializeStrudel])
 
   useEffect(() => {
     if (window.strudel?.scheduler) {

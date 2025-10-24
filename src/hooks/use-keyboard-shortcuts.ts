@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useStrudel } from '@/store'
 
 export function useKeyboardShortcuts() {
   const { isPlaying, play, stop } = useStrudel()
+  const playTimeoutRef = useRef<number>()
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -10,9 +11,12 @@ export function useKeyboardShortcuts() {
         switch (event.key) {
           case 'Enter':
             event.preventDefault()
-            if (!isPlaying) {
-              play()
+            if (playTimeoutRef.current) {
+              clearTimeout(playTimeoutRef.current)
             }
+            playTimeoutRef.current = setTimeout(() => {
+              play()
+            }, 200)
             break
 
           case '.':
@@ -36,6 +40,9 @@ export function useKeyboardShortcuts() {
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
+      if (playTimeoutRef.current) {
+        clearTimeout(playTimeoutRef.current)
+      }
     }
   }, [isPlaying, play, stop])
 }
