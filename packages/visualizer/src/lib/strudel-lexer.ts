@@ -8,10 +8,25 @@ export function tokenize(code: string): Token[] {
 
   const keywords = new Set([
     'sound', 's',
-    'stack', 'cat', 'slowcat', 'fastcat',
+    'stack', 'cat', 'slowcat', 'fastcat', 'append', 'fastAppend', 'slowAppend', 'overlay', 'layer', 'superimpose',
+    'add', 'sub', 'mul', 'div',
+    'scale', 'chord', 'arp', 'arpeggiate', 'note', 'n', 'freq',
+    'legato', 'sustain', 'hold',
+    'cut', 'orbit',
+    'struct', 'mask', 'euclid', 'euclidLegato', 'euclidRot',
+    'inside', 'outside', 'compress', 'focus', 'zoom', 'fastGap',
+    'range', 'rangex', 'saw', 'sine', 'square', 'tri', 'rand', 'irand', 'perlin', 'choose', 'wchoose',
+    'shuffle', 'scramble', 'rot', 'swingBy', 'swing', 'ghost', 'press',
+    'fit', 'quantize', 'inhabit', 'splice', 'weave',
     'fast', 'slow', 'cpm', 'bpm', 'every', 'whenmod', 'stut', 'echo', 'ply', 'hurry',
+    'sometimes', 'often', 'rarely', 'almostNever', 'almostAlways', 'never', 'always', 'someCycles', 'someCyclesBy',
+    'off', 'jux', 'juxBy', 'rev', 'palindrome', 'iter', 'degrade', 'degradeBy',
+    'chunk', 'segment', 'bite', 'chop',
     'gain', 'velocity', 'lpf', 'hpf', 'bandf', 'crush', 'distort', 'coarse',
-    'rev', 'speed', 'delay', 'room', 'cut', 'jux', 'juxBy', 'bite', 'chop'
+    'room', 'delay', 'tremolo', 'phaser', 'chorus',
+    'djf', 'vowel', 'cutoff', 'resonance', 'hcutoff', 'lcutoff',
+    'speed', 'accelerate', 'pitch', 'octave',
+    'pan'
   ])
 
   while (position < code.length) {

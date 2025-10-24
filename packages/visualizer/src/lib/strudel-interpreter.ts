@@ -60,7 +60,14 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             break
           case 'speed':
           case 'hurry':
+          case 'accelerate':
             speed *= typeof modifier.args[0] === 'number' ? modifier.args[0] : 1.0
+            break
+          case 'pitch':
+            effects.pitch = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'octave':
+            effects.octave = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
             break
           case 'delay':
           case 'echo':
@@ -69,17 +76,38 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
           case 'room':
             effects.reverb = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
             break
+          case 'tremolo':
+            effects.tremolo = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'phaser':
+            effects.phaser = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'chorus':
+            effects.chorus = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
           case 'cut':
             effects.cut = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
             break
           case 'lpf':
+          case 'lcutoff':
             effects.lpf = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
             break
           case 'hpf':
+          case 'hcutoff':
             effects.hpf = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
             break
           case 'bandf':
+          case 'cutoff':
             effects.bandf = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'resonance':
+            effects.resonance = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'djf':
+            effects.djf = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'vowel':
+            effects.vowel = typeof modifier.args[0] === 'string' ? modifier.args[0] : 'a'
             break
           case 'crush':
             effects.crush = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
@@ -89,6 +117,9 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             break
           case 'coarse':
             effects.coarse = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            break
+          case 'pan':
+            effects.pan = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
             break
           case 'fast': {
             const factor = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
@@ -105,11 +136,79 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             baseDuration = baseDuration / repeats
             break
           }
-          case 'stut': {
-            break
-          }
+          case 'stut':
           case 'every':
           case 'whenmod':
+          case 'sometimes':
+          case 'often':
+          case 'rarely':
+          case 'almostNever':
+          case 'almostAlways':
+          case 'never':
+          case 'always':
+          case 'someCycles':
+          case 'someCyclesBy':
+          case 'off':
+          case 'jux':
+          case 'juxBy':
+          case 'rev':
+          case 'palindrome':
+          case 'iter':
+          case 'degrade':
+          case 'degradeBy':
+          case 'chunk':
+          case 'segment':
+          case 'bite':
+          case 'chop':
+          case 'add':
+          case 'sub':
+          case 'mul':
+          case 'div':
+          case 'scale':
+          case 'chord':
+          case 'arp':
+          case 'arpeggiate':
+          case 'note':
+          case 'n':
+          case 'freq':
+          case 'legato':
+          case 'sustain':
+          case 'hold':
+          case 'orbit':
+          case 'struct':
+          case 'mask':
+          case 'euclid':
+          case 'euclidLegato':
+          case 'euclidRot':
+          case 'inside':
+          case 'outside':
+          case 'compress':
+          case 'focus':
+          case 'zoom':
+          case 'fastGap':
+          case 'range':
+          case 'rangex':
+          case 'saw':
+          case 'sine':
+          case 'square':
+          case 'tri':
+          case 'rand':
+          case 'irand':
+          case 'perlin':
+          case 'choose':
+          case 'wchoose':
+          case 'shuffle':
+          case 'scramble':
+          case 'rot':
+          case 'swingBy':
+          case 'swing':
+          case 'ghost':
+          case 'press':
+          case 'fit':
+          case 'quantize':
+          case 'inhabit':
+          case 'splice':
+          case 'weave':
             break
         }
       }
