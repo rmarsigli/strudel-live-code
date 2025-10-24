@@ -74,46 +74,54 @@ docs/
 
 ---
 
-## Fase 2: TypeScript Types e Interfaces
+## Fase 2: TypeScript Types e Interfaces ✅
 
 ### 2.1 Tipos Base
-- [ ] `src/types/pattern.ts` - Pattern, PatternFile, PatternMetadata
-- [ ] `src/types/websocket.ts` - WSMessage, WSEvent, ConnectionStatus
-- [ ] `src/types/playback.ts` - PlaybackState, AudioConfig
-- [ ] `src/types/ui.ts` - LogEntry, ToastType, ModalState
-- [ ] `src/types/file.ts` - FileInfo, FileOperation
+- [x] `src/types/pattern.ts` - Pattern, PatternFile, PatternMetadata
+- [x] `src/types/websocket.ts` - WSMessage, WSEvent, ConnectionStatus
+- [x] `src/types/playback.ts` - PlaybackState, AudioConfig
+- [x] `src/types/ui.ts` - LogEntry, ToastType, ModalState
+- [x] `src/types/file.ts` - FileInfo, FileOperation
+- [x] `src/types/index.ts` - Export barrel
 
 ---
 
 ### 2.2 Tipos Strudel
-- [ ] Criar declarações de tipo para @strudel/core
-- [ ] Estender tipos para pattern API
-- [ ] Tipos para evalScope, controls, samples
+- [x] Pattern type como unknown (será refinado com integração Strudel)
 
 ---
 
-## Fase 3: Zustand Store
+## Fase 3: Zustand Store ✅
 
 ### 3.1 Store Principal
-- [ ] `src/store/use-strudel.ts` - Store global
-  - [ ] State: isPlaying, currentPattern, patterns, selectedFile
-  - [ ] Actions: play, stop, setPattern, loadPattern
-  - [ ] Middleware: devtools, persist (selectedFile, settings)
+- [x] `src/store/use-strudel.ts` - Store global
+  - [x] State: isPlaying, currentPattern, patternCode, volume
+  - [x] Actions: play, stop, togglePlay, setPattern
+  - [x] Middleware: devtools, persist (volume, patternCode)
 
 ---
 
 ### 3.2 Stores Específicos
-- [ ] `src/store/use-connection.ts` - WebSocket connection state
-  - [ ] State: status, reconnectAttempts, lastMessage
-  - [ ] Actions: connect, disconnect, send
+- [x] `src/store/use-connection.ts` - WebSocket connection state
+  - [x] State: status, ws, reconnectAttempts, lastMessage
+  - [x] Actions: setStatus, send, disconnect, incrementReconnectAttempts
 
-- [ ] `src/store/use-files.ts` - File management
-  - [ ] State: files, currentFile, isLoading
-  - [ ] Actions: loadFiles, createFile, deleteFile, renameFile
+- [x] `src/store/use-files.ts` - File management
+  - [x] State: files, currentFile, isLoading
+  - [x] Actions: setFiles, addFile, removeFile, updateFile, renameFile
 
-- [ ] `src/store/use-ui.ts` - UI state
-  - [ ] State: logs, modals, toasts
-  - [ ] Actions: addLog, openModal, showToast
+- [x] `src/store/use-ui.ts` - UI state
+  - [x] State: logs, modals, toasts
+  - [x] Actions: addLog, openModal, closeModal, showToast
+
+- [x] `src/store/index.ts` - Export barrel
+
+---
+
+### 3.3 Libs e Helpers
+- [x] `src/lib/constants.ts` - Constantes do projeto
+- [x] `src/lib/validation.ts` - Funções de validação e formatação
+- [x] `src/lib/utils.ts` - Helper cn() para shadcn/ui
 
 ---
 
