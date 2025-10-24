@@ -69,7 +69,7 @@ export function FileBrowser() {
                 <div
                   key={file.name}
                   className={`group flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent cursor-pointer transition-colors ${
-                    currentFile?.name === file.name ? 'bg-accent' : ''
+                    currentFile?.name === file.name ? 'bg-accent text-slate-900' : ''
                   }`}
                   onClick={() => handleFileClick(file)}
                 >
