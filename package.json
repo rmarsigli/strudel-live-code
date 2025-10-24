@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "tsx server/index.ts",
+    "server:dev": "tsx watch server/index.ts"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.4",
@@ -48,6 +50,7 @@
     "jsdom": "^27.0.1",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.0.0",
+    "tsx": "^4.20.6",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.45.0",
     "vite": "^7.1.7",

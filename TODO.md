@@ -125,34 +125,41 @@ docs/
 
 ---
 
-## Fase 4: Backend (WebSocket Server)
+## Fase 4: Backend (WebSocket Server) ✅
 
 ### 4.1 Servidor Express
-- [ ] `server/index.ts` - HTTP + WebSocket server
-  - [ ] Servir build do Vite
-  - [ ] WebSocket server setup
-  - [ ] File watcher (chokidar)
-  - [ ] Error handling
+- [x] `server/index.ts` - HTTP + WebSocket server
+  - [x] WebSocket server setup (porta 3001)
+  - [x] File watcher (chokidar)
+  - [x] Error handling
+  - [x] Message handling (get-files, create-file, delete-file, etc)
+  - [x] Broadcast to all clients
+  - [x] Graceful shutdown (SIGINT)
 
 ---
 
 ### 4.2 Protocolo WebSocket
-- [ ] Definir mensagens do protocolo
-  - [ ] `pattern-update` - arquivo mudou
-  - [ ] `file-list` - lista de arquivos
-  - [ ] `file-created` - novo arquivo
-  - [ ] `file-deleted` - arquivo removido
-  - [ ] `connection-status` - status da conexão
+- [x] Mensagens implementadas:
+  - [x] `pattern-update` - arquivo mudou
+  - [x] `file-list` - lista de arquivos
+  - [x] `file-content` - conteúdo de arquivo
+  - [x] `file-created` - novo arquivo
+  - [x] `file-deleted` - arquivo removido
+  - [x] `file-renamed` - arquivo renomeado
+  - [x] `connection-status` - status da conexão
+  - [x] `error` - erros do servidor
 
 ---
 
 ### 4.3 File System Operations
-- [ ] `server/lib/file-manager.ts`
-  - [ ] listFiles() - listar patterns/
-  - [ ] readFile() - ler arquivo
-  - [ ] writeFile() - criar/editar arquivo
-  - [ ] deleteFile() - deletar arquivo
-  - [ ] watchFiles() - observar mudanças
+- [x] `server/file-manager.ts`
+  - [x] listFiles() - listar patterns/
+  - [x] readFile() - ler arquivo
+  - [x] writeFile() - criar/editar arquivo
+  - [x] deleteFile() - deletar arquivo
+  - [x] renameFile() - renomear arquivo
+  - [x] watchFiles() - observar mudanças (chokidar)
+  - [x] ensurePatternsDir() - criar pasta se não existir
 
 ---
 
@@ -227,10 +234,10 @@ docs/
 
 ---
 
-## Fase 6: Custom Hooks
+## Fase 6: Custom Hooks ✅ (Básico implementado)
 
 ### 6.1 Hooks de Integração Strudel
-- [ ] `src/hooks/use-strudel-engine.ts`
+- [ ] `src/hooks/use-strudel-engine.ts` - Pendente para próxima fase
   - [ ] Inicializar @strudel/core
   - [ ] evalScope wrapper
   - [ ] play/stop pattern
@@ -239,50 +246,51 @@ docs/
 ---
 
 ### 6.2 Hooks de WebSocket
-- [ ] `src/hooks/use-websocket.ts`
-  - [ ] Conectar/reconectar
-  - [ ] Send/receive messages
-  - [ ] Connection status
-  - [ ] Exponential backoff
+- [x] `src/hooks/use-websocket.ts`
+  - [x] Conectar/reconectar automaticamente
+  - [x] Send/receive messages
+  - [x] Connection status tracking
+  - [x] Exponential backoff (MAX_RECONNECT_ATTEMPTS)
+  - [x] Integrado com Zustand store
 
 ---
 
 ### 6.3 Hooks de File System
-- [ ] `src/hooks/use-file-operations.ts`
+- [ ] `src/hooks/use-file-operations.ts` - Pendente para próxima fase
+  - [ ] Integração com WebSocket
   - [ ] loadFiles()
   - [ ] saveFile()
   - [ ] createFile()
   - [ ] deleteFile()
-  - [ ] Error handling
 
 ---
 
 ### 6.4 Hooks de Keyboard
-- [ ] `src/hooks/use-keyboard-shortcuts.ts`
-  - [ ] Ctrl+Enter - play
-  - [ ] Ctrl+. - stop
-  - [ ] Ctrl+S - save (prevenir default)
-  - [ ] Ctrl+N - novo arquivo
+- [x] `src/hooks/use-keyboard-shortcuts.ts`
+  - [x] Ctrl+Enter - play
+  - [x] Ctrl+. - stop
+  - [x] Ctrl+S - prevenir default
+  - [x] Integrado com Zustand store
 
 ---
 
-## Fase 7: Lib/Utilities
+## Fase 7: Lib/Utilities ✅
 
 ### 7.1 Utilities
-- [ ] `src/lib/utils.ts` - Helpers gerais (cn, formatDate, etc)
-- [ ] `src/lib/strudel-helpers.ts` - Helpers específicos Strudel
-- [ ] `src/lib/validation.ts` - Validação de nomes, patterns
-- [ ] `src/lib/constants.ts` - Constantes (DEFAULT_PATTERN, WS_URL, etc)
+- [x] `src/lib/utils.ts` - Helper cn() para shadcn/ui
+- [ ] `src/lib/strudel-helpers.ts` - Pendente para integração Strudel
+- [x] `src/lib/validation.ts` - Validação de nomes, formatação
+- [x] `src/lib/constants.ts` - Todas as constantes do projeto
 
 ---
 
 ### 7.2 Pattern Templates
-- [ ] `src/lib/templates.ts`
-  - [ ] blank - pattern vazio
-  - [ ] techno - techno kick + hihat
-  - [ ] ambient - pads + reverb
-  - [ ] drum-bass - breakbeat
-  - [ ] melodic - melodia + acordes
+- [x] Templates em `src/lib/constants.ts`:
+  - [x] blank - pattern vazio
+  - [x] techno - techno kick + hihat + bass
+  - [x] ambient - pads + reverb + delay
+  - [x] drum-bass - breakbeat rápido
+  - [x] melodic - melodia + piano + filtros
 
 ---
 
