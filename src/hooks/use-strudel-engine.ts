@@ -223,13 +223,22 @@ export function useStrudelEngine() {
   }, [initializeStrudel])
 
   useEffect(() => {
-    if (window.strudel?.scheduler) {
-      const scheduler = window.strudel.scheduler as unknown as { gainNode?: GainNode }
-      if (scheduler.gainNode) {
-        scheduler.gainNode.gain.value = volume
+    if (!isInitializedRef.current) return
+
+    if (window.strudel?.getAudioContext) {
+      try {
+        const audioContext = window.strudel.getAudioContext()
+        const scheduler = window.strudel.scheduler as unknown as { gainNode?: GainNode }
+
+        if (scheduler.gainNode) {
+          scheduler.gainNode.gain.setValueAtTime(volume, audioContext.currentTime)
+          addLog(`Volume set to ${Math.round(volume * 100)}%`)
+        }
+      } catch (error) {
+        console.error('Failed to set volume:', error)
       }
     }
-  }, [volume])
+  }, [volume, addLog])
 
   return {
     evaluatePattern,

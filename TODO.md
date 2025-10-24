@@ -587,7 +587,193 @@ docs/
 
 ---
 
+## 🚀 PRÓXIMA SESSÃO - Tarefas Prioritárias
+
+**Data Planejada**: 2025-10-25
+**Status**: ⏳ Aguardando execução
+
+### 1. Visualizador de Áudio REAL ⚡
+**Prioridade**: 🔴 Alta
+**Tempo estimado**: 2-3 horas
+
+#### Problema Atual
+- Barras de áudio são procedurais/simuladas
+- Não refletem o áudio real tocando
+- Tentamos usar AnalyserNode mas Strudel não expõe os nós de áudio
+
+#### Solução: MediaStream Capture API
+Capturar o áudio da aba do navegador usando a Web Audio API.
+
+**Implementação**:
+
+1. **Criar novo hook: `use-audio-capture.ts`**
+   ```typescript
+   - Solicitar permissão do usuário (navigator.mediaDevices.getDisplayMedia)
+   - Capturar o stream de áudio da aba
+   - Criar MediaStreamSource + AnalyserNode
+   - Expor frequencyData via ref ou state
+   ```
+
+2. **Atualizar `visualizer.tsx`**
+   ```typescript
+   - Consumir frequencyData do hook
+   - Remover lógica procedural
+   - Usar getByteFrequencyData() real
+   - Manter decaimento suave (0.85)
+   ```
+
+3. **Adicionar UI de permissão**
+   ```typescript
+   - Modal/Toast solicitando permissão
+   - Botão "Ativar visualizador real"
+   - Fallback para barras procedurais se não autorizado
+   ```
+
+**Arquivos a modificar**:
+- `src/hooks/use-audio-capture.ts` (CRIAR)
+- `src/components/visualizer.tsx` (ATUALIZAR)
+- `src/store/use-ui.ts` (adicionar state para permissão)
+
+**Latência esperada**: 20-50ms (aceitável!)
+
+---
+
+### 2. Corrigir Controle de Volume 🔊
+**Prioridade**: 🟡 Média
+**Tempo estimado**: 30min - 1 hora
+
+#### Problema Atual
+- Slider de volume não afeta o áudio
+- Volume está conectado ao store mas não ao Strudel
+
+#### Solução
+1. **Investigar `use-strudel-engine.ts`**
+   - Verificar se `gainNode` está acessível
+   - Conectar `volume` do store ao `gainNode.gain.value`
+
+2. **Atualizar hook de volume**
+   ```typescript
+   useEffect(() => {
+     if (window.strudel?.scheduler?.gainNode) {
+       window.strudel.scheduler.gainNode.gain.value = volume
+     }
+   }, [volume])
+   ```
+
+3. **Testar persistência**
+   - Volume deve persistir no localStorage
+   - Volume deve aplicar ao iniciar
+
+**Arquivos a modificar**:
+- `src/hooks/use-strudel-engine.ts` (ATUALIZAR linhas 204-211)
+- `src/components/control-panel.tsx` (verificar se onChange está correto)
+
+---
+
+### 3. Console Minimizável 📋
+**Prioridade**: 🟢 Baixa
+**Tempo estimado**: 1-2 horas
+
+#### Problema Atual
+- Log panel sempre visível (ocupa espaço)
+- Não há como fechar/minimizar
+
+#### Solução: Implementar toggle de visibilidade
+
+1. **Adicionar state no `use-ui.ts`**
+   ```typescript
+   isLogPanelOpen: boolean (default: true)
+   toggleLogPanel: () => void
+   ```
+
+2. **Criar botão de toggle**
+   - Ícone: ChevronDown/ChevronUp
+   - Posição: canto superior direito do log panel
+   - Animação: slide down/up (Tailwind transitions)
+
+3. **Implementar lógica de minimização**
+   ```typescript
+   - Quando minimizado: mostrar apenas 1 linha com botão de expandir
+   - Quando expandido: mostrar log completo
+   - Persistir estado no localStorage
+   ```
+
+4. **Adicionar atalho de teclado**
+   - `Ctrl+L` ou `Ctrl+~` para toggle do console
+   - Adicionar em `use-keyboard-shortcuts.ts`
+
+**Arquivos a modificar**:
+- `src/store/use-ui.ts` (adicionar state)
+- `src/components/log-panel.tsx` (adicionar botão + animação)
+- `src/hooks/use-keyboard-shortcuts.ts` (adicionar atalho)
+- `src/lib/constants.ts` (adicionar KEYBOARD_SHORTCUTS.TOGGLE_CONSOLE)
+
+---
+
+## Plano de Execução (Ordem)
+
+### Sessão 1 (Manhã - 2-3h)
+1. ✅ Implementar `use-audio-capture.ts`
+2. ✅ Atualizar `visualizer.tsx` com captura real
+3. ✅ Testar e ajustar sensibilidade do analyser
+
+### Sessão 2 (Tarde - 1-2h)
+4. ✅ Corrigir volume control
+5. ✅ Implementar console minimizável
+6. ✅ Testar tudo integrado
+
+### Sessão 3 (Polimento - 30min-1h)
+7. ✅ Atualizar README.md com novas features
+8. ✅ Criar GIF/screenshot do visualizador real
+9. ✅ Commit e push
+
+---
+
+## Notas Técnicas
+
+### MediaStream Capture API
+```javascript
+// Solicitar captura de tela/áudio
+const stream = await navigator.mediaDevices.getDisplayMedia({
+  video: false,
+  audio: {
+    echoCancellation: false,
+    noiseSuppression: false,
+    autoGainControl: false
+  }
+})
+
+// Criar source do stream
+const audioContext = new AudioContext()
+const source = audioContext.createMediaStreamSource(stream)
+const analyser = audioContext.createAnalyser()
+
+source.connect(analyser)
+// NÃO conectar ao destination (para evitar eco)
+
+// Usar analyser.getByteFrequencyData()
+```
+
+### Compatibilidade
+- Chrome/Edge: ✅ Suportado
+- Firefox: ✅ Suportado
+- Safari: ⚠️ Limitado (pode não funcionar)
+
+### Fallback
+Se permissão negada ou browser incompatível:
+- Manter barras procedurais
+- Mostrar toast: "Visualizador real desabilitado, usando simulação"
+
+---
+
 ## Log de Alterações
+
+### 2025-10-24
+- ✅ Integração Strudel completa
+- ✅ Auto-save funcionando (1000ms debounce)
+- ✅ Validação de código com delay (100ms)
+- ✅ Barras procedurais implementadas
+- ⏳ Próxima sessão: áudio real + volume + console minimizável
 
 ### 2025-10-23
 - ✅ TODO.md criado

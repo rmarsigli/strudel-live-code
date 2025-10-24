@@ -1,11 +1,12 @@
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 import type { LogEntry, ModalState, ToastMessage, ToastType } from '@/types'
 
 interface UIState {
   logs: LogEntry[]
   modals: ModalState
   toasts: ToastMessage[]
+  isLogPanelOpen: boolean
 
   addLog: (message: string, level?: LogEntry['level']) => void
   clearLogs: () => void
@@ -13,64 +14,81 @@ interface UIState {
   closeModal: () => void
   showToast: (message: string, type?: ToastType, duration?: number) => void
   removeToast: (id: string) => void
+  toggleLogPanel: () => void
 }
 
 export const useUI = create<UIState>()(
-  devtools((set) => ({
-    logs: [],
-    modals: {
-      type: null,
-      isOpen: false,
-    },
-    toasts: [],
-
-    addLog: (message, level = 'info') => set((state) => ({
-      logs: [
-        ...state.logs,
-        {
-          id: `${Date.now()}-${Math.random()}`,
-          timestamp: Date.now(),
-          message,
-          level,
+  persist(
+    devtools(
+      (set) => ({
+        logs: [],
+        modals: {
+          type: null,
+          isOpen: false,
         },
-      ].slice(-100)
-    })),
+        toasts: [],
+        isLogPanelOpen: true,
 
-    clearLogs: () => set({ logs: [] }),
+        addLog: (message, level = 'info') => set((state) => ({
+          logs: [
+            ...state.logs,
+            {
+              id: `${Date.now()}-${Math.random()}`,
+              timestamp: Date.now(),
+              message,
+              level,
+            },
+          ].slice(-100)
+        })),
 
-    openModal: (type, data) => set({
-      modals: {
-        type,
-        isOpen: true,
-        data,
-      },
-    }),
+        clearLogs: () => set({ logs: [] }),
 
-    closeModal: () => set({
-      modals: {
-        type: null,
-        isOpen: false,
-        data: undefined,
-      },
-    }),
+        openModal: (type, data) => set({
+          modals: {
+            type,
+            isOpen: true,
+            data,
+          },
+        }),
 
-    showToast: (message, type = 'info', duration = 3000) => set((state) => {
-      const id = `${Date.now()}-${Math.random()}`
-      const toast: ToastMessage = { id, message, type, duration }
+        closeModal: () => set({
+          modals: {
+            type: null,
+            isOpen: false,
+            data: undefined,
+          },
+        }),
 
-      setTimeout(() => {
-        set((state) => ({
+        showToast: (message, type = 'info', duration = 3000) => set((state) => {
+          const id = `${Date.now()}-${Math.random()}`
+          const toast: ToastMessage = { id, message, type, duration }
+
+          setTimeout(() => {
+            set((state) => ({
+              toasts: state.toasts.filter(t => t.id !== id)
+            }))
+          }, duration)
+
+          return {
+            toasts: [...state.toasts, toast]
+          }
+        }),
+
+        removeToast: (id) => set((state) => ({
           toasts: state.toasts.filter(t => t.id !== id)
-        }))
-      }, duration)
+        })),
 
-      return {
-        toasts: [...state.toasts, toast]
+        toggleLogPanel: () => set((state) => ({
+          isLogPanelOpen: !state.isLogPanelOpen
+        })),
+      }),
+      {
+        name: 'strudel-ui-devtools',
       }
-    }),
-
-    removeToast: (id) => set((state) => ({
-      toasts: state.toasts.filter(t => t.id !== id)
-    })),
-  }))
+    ),
+    {
+      name: 'strudel-ui',
+      partialize: (state) => ({ isLogPanelOpen: state.isLogPanelOpen }),
+    }
+  )
 )

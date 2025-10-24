@@ -23,7 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Claude
+# Claude testing generator guidelines
 CLAUDE.md
 
 # My personal organizational file

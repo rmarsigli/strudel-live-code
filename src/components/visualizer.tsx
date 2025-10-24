@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react'
 import { useStrudel } from '@/store'
+import { useAudioAnalyzer } from '@/hooks/use-audio-analyzer'
 
 export function Visualizer() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number | undefined>(undefined)
   const barsRef = useRef<number[]>(new Array(64).fill(0))
   const { isPlaying } = useStrudel()
+  const frequencyData = useAudioAnalyzer()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -36,21 +38,13 @@ export function Visualizer() {
       ctx.fillRect(0, 0, width, height)
 
       const bars = barsRef.current
-      const time = Date.now() / 1000
 
-      if (isPlaying && window.strudel?.scheduler?.started) {
-        const bpm = 120
-        const beatTime = (60 / bpm) * 4
-        const phase = (time % beatTime) / beatTime
-
+      if (isPlaying && frequencyData) {
         for (let i = 0; i < bars.length; i++) {
-          const freq = (i / bars.length) * 8
-          const wave = Math.sin(time * freq + phase * Math.PI * 2) * 0.5 + 0.5
-          const kick = i < 8 ? Math.max(0, 1 - phase * 4) : 0
-          const hihat = i > bars.length - 16 ? (Math.sin(time * 16) * 0.5 + 0.5) : 0
+          const dataIndex = Math.floor((i / bars.length) * frequencyData.length)
+          const value = (frequencyData[dataIndex] || 0) / 255
 
-          const newValue = Math.min(1, (wave * 0.3 + kick * 0.5 + hihat * 0.4) * (Math.random() * 0.2 + 0.9))
-          bars[i] = Math.max(newValue, (bars[i] || 0) * 0.85)
+          bars[i] = Math.max(value, (bars[i] || 0) * 0.85)
         }
       } else {
         for (let i = 0; i < bars.length; i++) {
@@ -92,7 +86,7 @@ export function Visualizer() {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [isPlaying])
+  }, [isPlaying, frequencyData])
 
   return (
     <div className="h-full w-full bg-[#0a0e1a]">

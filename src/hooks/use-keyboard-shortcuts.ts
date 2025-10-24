@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { useStrudel } from '@/store'
+import { useStrudel, useUI } from '@/store'
 
 export function useKeyboardShortcuts() {
   const { isPlaying, play, stop } = useStrudel()
+  const { toggleLogPanel } = useUI()
   const playTimeoutRef = useRef<number>()
 
   useEffect(() => {
@@ -30,6 +31,11 @@ export function useKeyboardShortcuts() {
             event.preventDefault()
             break
 
+          case 'l':
+            event.preventDefault()
+            toggleLogPanel()
+            break
+
           default:
             break
         }
@@ -44,5 +50,5 @@ export function useKeyboardShortcuts() {
         clearTimeout(playTimeoutRef.current)
       }
     }
-  }, [isPlaying, play, stop])
+  }, [isPlaying, play, stop, toggleLogPanel])
 }

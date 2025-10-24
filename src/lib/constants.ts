@@ -18,6 +18,7 @@ export const KEYBOARD_SHORTCUTS = {
   STOP: 'ctrl+.',
   SAVE: 'ctrl+s',
   NEW_FILE: 'ctrl+n',
+  TOGGLE_CONSOLE: 'ctrl+l',
 } as const
 
 export const PATTERN_TEMPLATES = {

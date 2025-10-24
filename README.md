@@ -71,6 +71,18 @@ The app will automatically detect and use local samples on next reload. No confi
 
 See [docs/samples-guide.md](./docs/samples-guide.md) for details.
 
+## Features
+
+- ✅ Live coding with Strudel patterns
+- ✅ Real-time code editing with CodeMirror 6
+- ✅ Auto-save (1000ms debounce)
+- ✅ Hot reload from any editor (VSCode, Vim, etc)
+- ✅ WebSocket sync between editor and browser
+- ✅ Keyboard shortcuts (Ctrl+Enter play, Ctrl+. stop)
+- ✅ Audio visualizer (procedural bars synced to BPM)
+- ✅ Log console for debugging
+- ✅ Local drum samples support
+
 ## Learn More
 
 - [Strudel Documentation](https://strudel.cc/learn)

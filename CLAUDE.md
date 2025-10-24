@@ -48,23 +48,9 @@ docs/             # Documentação técnica
 
 ## Documentação
 
-### README.md
-- **Público-alvo**: Entusiastas Strudel (não experts em código)
-- **Objetivo**: Plug and play - simples e direto
-- **Conteúdo máximo**:
-  - 1 parágrafo sobre o projeto
-  - 3 comandos de instalação
-  - 5 passos de como usar
-  - Link para docs/
-
 ### docs/
 - **Tom**: Técnico mas conciso (sem prolixidade)
-- **Arquivos** (em `kebab-case`):
-  - `architecture.md`
-  - `websocket-protocol.md`
-  - `strudel-integration.md`
-  - `contributing.md`
-  - `testing.md`
+- **Arquivos** (em `kebab-case`)
 
 ## UI/UX
 
@@ -82,33 +68,7 @@ docs/             # Documentação técnica
 - DropdownMenu
 - ScrollArea
 - ResizablePanelGroup
-
-## Features Obrigatórias
-
-### Gerenciamento de Arquivos
-- Listar arquivos de `patterns/`
-- Criar arquivo (via modal)
-- Deletar arquivo (confirmação via modal)
-- Renomear arquivo
-- Abrir no editor ao clicar
-
-### Editor
-- CodeMirror 6
-- Syntax highlighting (JavaScript/Strudel)
-- Auto-save com debounce (1000ms)
-- Keyboard shortcuts:
-  - `Ctrl+Enter` = Play
-  - `Ctrl+.` = Stop
-
-### Hot Reload
-- Editar no VSCode (ou qualquer editor) ou no site
-- Salvar arquivo
-- Atualizar automaticamente no browser via WebSocket
-
-### Header
-- Título do projeto
-- Status de conexão (verde/vermelho/amarelo)
-- Link do GitHub: `github.com/rmarsigli/strudel-live-code`
+- ...baixe novos componentes se necessário
 
 ## TypeScript Estrito
 
@@ -130,7 +90,7 @@ docs/             # Documentação técnica
 ## Testes
 
 ### Requisitos
-- Cobertura mínima: **80%**
+- Cobertura mínima: **90%**
 - Todos hooks testados
 - Componentes críticos testados
 - Stores testados
@@ -149,12 +109,6 @@ docs/             # Documentação técnica
 - Conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`
 - Mensagens em inglês
 - Atomic commits
-
-## Decisões do Projeto
-
-### Pasta de Patterns
-- **Nome**: `patterns/` (consistente com comunidade Strudel)
-- **Extensão**: `.strudel`
 
 ### Stack
 - Vite + React + TypeScript
