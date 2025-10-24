@@ -121,10 +121,14 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
 
   const events: AudioEvent[] = []
 
-  function traverseNode(node: PatternNode, baseTime: number = 0, baseDuration: number = 1, modifiers: AudioEvent['effects'] = {}): void {
+  function traverseNode(node: PatternNode, baseTime: number = 0, baseDuration: number = 1, modifiers: AudioEvent['effects'] = {}, transformations: { rev?: boolean; palindrome?: boolean; iter?: number; degrade?: number } = {}): void {
     let gain = 1.0
     let speed = 1.0
+    let fastFactor = 1
+    let slowFactor = 1
+    let plyFactor = 1
     const effects = { ...modifiers }
+    const transforms = { ...transformations }
 
     if (node.modifiers) {
       for (const modifier of node.modifiers) {
@@ -201,17 +205,36 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             break
           case 'fast': {
             const factor = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
-            baseDuration = baseDuration / factor
+            fastFactor *= factor
             break
           }
           case 'slow': {
             const factor = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
-            baseDuration = baseDuration * factor
+            slowFactor *= factor
             break
           }
           case 'ply': {
             const repeats = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
-            baseDuration = baseDuration / repeats
+            plyFactor *= repeats
+            break
+          }
+          case 'rev':
+            transforms.rev = true
+            break
+          case 'palindrome':
+            transforms.palindrome = true
+            break
+          case 'iter': {
+            const n = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
+            transforms.iter = n
+            break
+          }
+          case 'degrade':
+            transforms.degrade = 0.5
+            break
+          case 'degradeBy': {
+            const prob = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0.5
+            transforms.degrade = prob
             break
           }
           case 'stut':
@@ -229,11 +252,6 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
           case 'off':
           case 'jux':
           case 'juxBy':
-          case 'rev':
-          case 'palindrome':
-          case 'iter':
-          case 'degrade':
-          case 'degradeBy':
           case 'chunk':
           case 'segment':
           case 'bite':
@@ -292,22 +310,41 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
       }
     }
 
+    const timingMultiplier = (fastFactor / slowFactor) * plyFactor
+    const adjustedDuration = baseDuration / (fastFactor / slowFactor)
+
     switch (node.type) {
       case 'sound':
       case 'sample_select': {
         if (!node.value) break
 
-        events.push({
-          sound: node.value,
-          time: baseTime + node.position,
-          duration: node.duration * baseDuration,
-          type: detectSoundType(node.value),
-          gain,
-          speed,
-          effects,
-          probability: node.weight ? node.weight / 10 : 1.0,
-          sampleIndex: node.sampleIndex
-        })
+        if (timingMultiplier > 1) {
+          for (let i = 0; i < timingMultiplier; i++) {
+            events.push({
+              sound: node.value,
+              time: baseTime + node.position + (i * adjustedDuration * node.duration),
+              duration: node.duration * adjustedDuration,
+              type: detectSoundType(node.value),
+              gain,
+              speed,
+              effects,
+              probability: node.weight ? node.weight / 10 : 1.0,
+              sampleIndex: node.sampleIndex
+            })
+          }
+        } else {
+          events.push({
+            sound: node.value,
+            time: baseTime + node.position,
+            duration: node.duration * adjustedDuration,
+            type: detectSoundType(node.value),
+            gain,
+            speed,
+            effects,
+            probability: node.weight ? node.weight / 10 : 1.0,
+            sampleIndex: node.sampleIndex
+          })
+        }
         break
       }
 
@@ -318,8 +355,43 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
       case 'subgroup':
       case 'repetition': {
         if (node.children) {
-          for (const child of node.children) {
-            traverseNode(child, baseTime, baseDuration, effects)
+          let children = [...node.children]
+
+          if (transforms.rev) {
+            children = children.reverse()
+          }
+
+          if (transforms.palindrome) {
+            children = [...children, ...children.slice().reverse()]
+          }
+
+          if (transforms.iter && transforms.iter > 1) {
+            const original = [...node.children]
+            children = []
+            for (let i = 0; i < transforms.iter; i++) {
+              const rotated = [...original.slice(i), ...original.slice(0, i)]
+              children.push(...rotated)
+            }
+          }
+
+          if (timingMultiplier > 1) {
+            const originalChildren = [...children]
+            children = []
+            for (let i = 0; i < timingMultiplier; i++) {
+              children.push(...originalChildren)
+            }
+          }
+
+          let timeOffset = 0
+          const childDuration = adjustedDuration / (timingMultiplier > 1 ? timingMultiplier : 1)
+
+          for (const child of children) {
+            if (transforms.degrade && Math.random() < (transforms.degrade || 0)) {
+              timeOffset += childDuration
+              continue
+            }
+            traverseNode(child, baseTime + timeOffset, childDuration, effects, {})
+            timeOffset += childDuration
           }
         }
         break
@@ -327,10 +399,10 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
 
       case 'alternation': {
         if (node.children && node.children.length > 0) {
-          const cycleIndex = Math.floor(baseTime / baseDuration) % node.children.length
+          const cycleIndex = Math.floor(baseTime / adjustedDuration) % node.children.length
           const selectedChild = node.children[cycleIndex]
           if (selectedChild) {
-            traverseNode(selectedChild, baseTime, baseDuration, effects)
+            traverseNode(selectedChild, baseTime, adjustedDuration, effects, {})
           }
         }
         break
@@ -348,7 +420,7 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             events.push({
               sound: node.value,
               time: baseTime + node.position + (i * stepDuration),
-              duration: stepDuration * baseDuration,
+              duration: stepDuration * adjustedDuration,
               type: detectSoundType(node.value),
               gain,
               speed,
@@ -363,7 +435,7 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
       case 'stack': {
         if (node.children) {
           for (const child of node.children) {
-            traverseNode(child, baseTime, baseDuration, effects)
+            traverseNode(child, baseTime, adjustedDuration, effects, {})
           }
         }
         break
@@ -371,11 +443,11 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
 
       case 'cat': {
         if (node.children) {
-          const stepDuration = baseDuration / node.children.length
+          const stepDuration = adjustedDuration / node.children.length
           let currentTime = baseTime
 
           for (const child of node.children) {
-            traverseNode(child, currentTime, stepDuration, effects)
+            traverseNode(child, currentTime, stepDuration, effects, {})
             currentTime += stepDuration
           }
         }
@@ -384,10 +456,10 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
 
       case 'slowcat': {
         if (node.children) {
-          const cycleIndex = Math.floor(baseTime / baseDuration) % node.children.length
+          const cycleIndex = Math.floor(baseTime / adjustedDuration) % node.children.length
           const selectedChild = node.children[cycleIndex]
           if (selectedChild) {
-            traverseNode(selectedChild, baseTime, baseDuration, effects)
+            traverseNode(selectedChild, baseTime, adjustedDuration, effects, {})
           }
         }
         break
@@ -395,11 +467,11 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
 
       case 'fastcat': {
         if (node.children) {
-          const stepDuration = baseDuration / node.children.length
+          const stepDuration = adjustedDuration / node.children.length
           let currentTime = baseTime
 
           for (const child of node.children) {
-            traverseNode(child, currentTime, stepDuration, effects)
+            traverseNode(child, currentTime, stepDuration, effects, {})
             currentTime += stepDuration
           }
         }
@@ -412,3 +484,4 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
 
   return events.sort((a, b) => a.time - b.time)
 }
+
