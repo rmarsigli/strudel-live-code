@@ -80,17 +80,14 @@ export function useStrudelEngine() {
     try {
       addLog('Initializing Strudel engine...')
 
-      const { initStrudel, samples } = await import('@strudel/web')
+      const { initStrudel, samples, getAudioContext } = await import('@strudel/web')
 
       const { evaluate, scheduler } = await initStrudel()
-
-      const schedulerAny = scheduler as unknown as { audioContext?: AudioContext }
-      const audioContext = schedulerAny.audioContext
 
       window.strudel = {
         evaluate,
         scheduler,
-        getAudioContext: audioContext ? () => audioContext : undefined,
+        getAudioContext,
       }
 
       isInitializedRef.current = true

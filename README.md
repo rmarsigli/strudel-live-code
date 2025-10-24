@@ -83,8 +83,11 @@ See [docs/samples-guide.md](./docs/samples-guide.md) for details.
 - ✅ Hot reload from any editor (VSCode, Vim, etc)
 - ✅ WebSocket sync between editor and browser
 - ✅ Keyboard shortcuts (Ctrl+Enter play, Ctrl+. stop)
-- ✅ Audio visualizer (procedural bars synced to BPM)
-- ✅ Log console for debugging
+- ✅ **Intelligent audio visualizer** - parses your Strudel code and generates precise visualizations
+  - Supports mini-notation, stack, modifiers (fast, slow, gain, speed, delay, room)
+  - Euclidean rhythms, alternation, subgroups, sample selection
+  - Type detection (kick, snare, hihat, bass, synth, perc, fx)
+- ✅ Log console for debugging (collapsible with Ctrl+L)
 - ✅ Local drum samples support
 
 ## Learn More

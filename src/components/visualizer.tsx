@@ -23,8 +23,6 @@ export function Visualizer() {
       canvas.width = width * window.devicePixelRatio
       canvas.height = height * window.devicePixelRatio
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
-
-      console.log('Canvas resized:', { width, height, dpr: window.devicePixelRatio })
     }
 
     resize()

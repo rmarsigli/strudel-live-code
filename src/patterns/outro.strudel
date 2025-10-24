@@ -1,6 +1,0 @@
-note('<Am7 Fmaj7 Cmaj7 G7>')
-  .voicing()
-  .s('pad')
-  .room(0.8)
-  .delay(0.5)
-  .slow(4)

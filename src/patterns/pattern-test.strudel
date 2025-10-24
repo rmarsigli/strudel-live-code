@@ -1,5 +1,0 @@
-stack(
-  s('bd*2 ~ bd ~'),
-  s('~ cp ~ cp'),
-  s('[hh hh oh]*2')
-).fast(2)
