@@ -40,20 +40,21 @@ export function useStrudelEngine() {
       addLog('Strudel engine initialized successfully')
 
       try {
-        const checkUrl = `${window.location.origin}/samples/dirt-samples/strudel.json`
-        const response = await fetch(checkUrl, { method: 'HEAD' })
+        const samplesUrl = `${window.location.origin}/samples/dirt-samples/strudel.json`
+        const response = await fetch(samplesUrl, { method: 'HEAD' })
 
         if (response.ok) {
           addLog('Local samples detected, loading...')
-          await samples('/samples/dirt-samples', {
-            baseUrl: window.location.origin,
-          })
+          // Load strudel.json and manually register samples
+          const samplesData = await fetch(samplesUrl).then((r) => r.json())
+          await samples(samplesData, `${window.location.origin}/samples/dirt-samples/`)
           addLog('Local samples loaded successfully')
           showToast('Strudel ready with local samples', 'success')
         } else {
           throw new Error('Samples not found')
         }
-      } catch {
+      } catch (error) {
+        console.error('Sample loading error:', error)
         addLog('No local samples found (synths only mode)', 'info')
         addLog('Run "pnpm run download-samples" to enable drum samples', 'info')
         showToast('Strudel ready (synths only)', 'success')

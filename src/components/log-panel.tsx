@@ -10,7 +10,7 @@ export function LogPanel() {
   if (logs.length === 0) return null
 
   return (
-    <div className="absolute bottom-20 left-4 right-4 max-h-48 rounded-lg border border-border bg-background/95 p-4 shadow-lg backdrop-blur">
+    <div className="absolute bottom-4 left-4 right-4 max-h-48 rounded-lg border border-border bg-background/95 p-4 shadow-lg backdrop-blur">
       <div className="mb-2 flex items-center justify-between">
         <span className="text-sm font-medium">Console</span>
         <Button

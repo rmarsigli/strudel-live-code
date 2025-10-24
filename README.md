@@ -44,6 +44,21 @@ note('c4 e4 g4 e4').s('piano')
 
 ## Configuration
 
+### Environment Variables
+
+Copy `.env.example` to `.env` and customize:
+
+```bash
+cp .env.example .env
+```
+
+Available variables:
+
+- `VITE_PORT` - WebSocket server port used by both server and client (default: 3001)
+- `VITE_WS_URL` - (Optional) Full WebSocket URL override for custom hosts/protocols
+
+See [Configuration Guide](./docs/configuration.md) for advanced configuration.
+
 ### Sample Loading
 
 By default, the app runs in **synths-only mode**. To add drum samples, download them:
@@ -59,6 +74,7 @@ See [docs/samples-guide.md](./docs/samples-guide.md) for details.
 ## Learn More
 
 - [Strudel Documentation](https://strudel.cc/learn)
+- [Configuration Guide](./docs/configuration.md)
 - [Samples Configuration](./docs/samples-guide.md)
 - [Testing Guide](./docs/testing.md)
 - [GitHub](https://github.com/rmarsigli/strudel-live-code)

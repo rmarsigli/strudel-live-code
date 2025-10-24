@@ -1,6 +1,7 @@
 export const DEFAULT_PATTERN = "s('bd sd bd sd')"
 
-export const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3001'
+const PORT = import.meta.env.VITE_PORT || '3001'
+export const WS_URL = import.meta.env.VITE_WS_URL || `ws://localhost:${PORT}`
 
 export const PATTERNS_DIR = 'patterns'
 

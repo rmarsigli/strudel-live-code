@@ -8,7 +8,7 @@ const server = createServer(app)
 const wss = new WebSocketServer({ server })
 const fileManager = new FileManager()
 
-const PORT = process.env.PORT || 3001
+const PORT = parseInt(process.env.PORT || process.env.VITE_PORT || '3001', 10)
 
 app.use(express.json())
 
