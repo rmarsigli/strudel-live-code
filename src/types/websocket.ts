@@ -12,8 +12,14 @@ export type WSMessageType =
   | 'file-created'
   | 'file-deleted'
   | 'file-renamed'
+  | 'file-content'
   | 'connection-status'
   | 'error'
+  | 'get-files'
+  | 'create-file'
+  | 'delete-file'
+  | 'rename-file'
+  | 'save-file'
 
 export interface PatternUpdateMessage extends WSMessage {
   type: 'pattern-update'

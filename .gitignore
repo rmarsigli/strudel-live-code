@@ -36,3 +36,7 @@ public/samples/*
 
 # Environment
 .env
+
+# Test coverage
+coverage
+.nyc_output

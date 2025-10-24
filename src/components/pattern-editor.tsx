@@ -10,7 +10,7 @@ export function PatternEditor() {
   const { patternCode, setPatternCode } = useStrudel()
   const { currentFile, updateFile } = useFiles()
   const { saveFile } = useFileOperations()
-  const saveTimeoutRef = useRef<NodeJS.Timeout>()
+  const saveTimeoutRef = useRef<number | undefined>(undefined)
 
   const handleChange = useCallback(
     (value: string) => {

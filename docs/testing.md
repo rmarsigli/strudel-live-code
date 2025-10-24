@@ -1,382 +1,244 @@
 # Testing Guide
 
-This guide explains how to test the Strudel Live Code application.
+This guide explains the testing setup and how to run tests for the Strudel Live Code application.
 
-## Quick Test
+## Test Stack
 
-### 1. Start the Application
+- **Vitest** - Fast unit test framework
+- **@testing-library/react** - React component testing utilities
+- **@testing-library/user-event** - User interaction simulation
+- **@testing-library/jest-dom** - Custom matchers for DOM assertions
+- **@vitest/coverage-v8** - Code coverage reports
 
-```bash
-# Terminal 1: Start server
-pnpm run server
+## Running Tests
 
-# Terminal 2: Start dev
-pnpm run dev
-```
-
-### 2. Test CDN Samples (Default)
-
-Open the browser console and look for:
-
-```
-Initializing Strudel engine...
-Strudel engine initialized successfully
-Loading samples from CDN...
-CDN samples loaded successfully
-```
-
-Toast notification should show: **"Strudel ready with samples"**
-
-### 3. Test Pattern with Samples
-
-Copy and paste the test pattern from `test-pattern.ts`:
-
-```javascript
-s('bd sd hh cp').fast(2)
-```
-
-Click **Play ▶️**. You should hear:
-- Bass drum (bd)
-- Snare drum (sd)
-- Hi-hat (hh)
-- Clap (cp)
-
-### 4. Test Synth-Only Pattern
-
-```javascript
-note('c e g b').sound('sawtooth').lpf(2000)
-```
-
-Click **Play ▶️**. You should hear a filtered sawtooth wave melody.
-
----
-
-## Testing Local Samples
-
-### 1. Download Samples
-
-```bash
-pnpm run download-samples
-```
-
-Expected output:
-```
-🎵 Downloading Dirt-Samples...
-📥 Cloning repository...
-✅ Samples downloaded successfully!
-📁 Location: public/samples/dirt-samples
-```
-
-### 2. Reload Page
-
-No configuration needed! Just reload the browser.
-
-### 3. Verify Auto-Detection
-
-Browser console should show:
-```
-Initializing Strudel engine...
-Strudel engine initialized successfully
-Local samples detected, loading...
-Local samples loaded successfully
-```
-
-Toast notification: **"Strudel ready with local samples"**
-
-### 4. Test Pattern
-
-Use drum samples from `test-pattern.ts`:
-```javascript
-s('bd sd hh cp').fast(2)
-```
-
----
-
-## Testing Sample Fallback
-
-### 1. Simulate Sample Load Failure
-
-Remove samples directory:
-```bash
-rm -rf public/samples/dirt-samples
-```
-
-### 2. Reload Page
-
-### 3. Expected Behavior
-
-Console shows:
-```
-Initializing Strudel engine...
-Strudel engine initialized successfully
-No local samples found (synths only mode)
-Run "pnpm run download-samples" to enable drum samples
-```
-
-Toast notification: **"Strudel ready (synths only)"**
-
-### 3. Test Synth Pattern
-
-Sample-based patterns won't work:
-```javascript
-s('bd sd')  // ❌ Will fail silently
-```
-
-But synth patterns will work:
-```javascript
-note('c e').sound('sawtooth')  // ✅ Works
-```
-
----
-
-## Test Patterns Reference
-
-All test patterns are in `test-pattern.ts`:
-
-### Pattern 1: Basic Samples
-```javascript
-s('bd sd hh cp').fast(2)
-```
-Tests: Sample loading, basic playback
-
-### Pattern 2: Stack
-```javascript
-stack(
-  s('bd*2'),
-  s('~ sd'),
-  s('hh*4')
-).slow(2)
-```
-Tests: Polyphony, rhythm patterns, rests
-
-### Pattern 3: Synth
-```javascript
-note('c e g b').sound('sawtooth').lpf(2000)
-```
-Tests: Synthesizers, effects, note patterns
-
----
-
-## WebSocket Testing
-
-### 1. Connection Test
-
-Check browser console on page load:
-```
-WebSocket connected
-```
-
-Status indicator should show: **Connected**
-
-### 2. File Operations Test
-
-**Create File:**
-1. Click **+** button in sidebar
-2. Enter filename: `test.txt`
-3. Select template
-4. Click Create
-
-Console should show:
-```
-File test.txt created
-```
-
-**Save File:**
-1. Edit pattern code
-2. Wait 1 second (auto-save)
-
-Server console shows:
-```
-File updated: test.txt
-```
-
-**Delete File:**
-1. Hover over file in sidebar
-2. Click trash icon
-3. Confirm deletion
-
-Console shows:
-```
-File test.txt deleted
-```
-
----
-
-## Audio Engine Testing
-
-### 1. Volume Control
-
-1. Play a pattern
-2. Adjust volume slider
-3. Volume should change in real-time
-
-### 2. Stop/Start
-
-1. Click Play ▶️
-2. Pattern plays
-3. Click Stop ⏹
-4. Pattern stops immediately
-
-### 3. Pattern Evaluation
-
-**Valid Pattern:**
-```javascript
-s('bd')
-```
-Console shows: `Pattern evaluated successfully`
-
-**Invalid Pattern:**
-```javascript
-s('bd'
-```
-Console shows: `Pattern evaluation error: ...`
-Toast shows error message
-
----
-
-## Performance Testing
-
-### 1. Pattern Complexity
-
-Test with increasingly complex patterns:
-
-```javascript
-// Simple
-s('bd sd')
-
-// Medium
-stack(s('bd sd'), s('hh*4'), note('c e g').sound('square'))
-
-// Complex
-stack(
-  s('bd*4').fast(2),
-  s('sd*2').slow(1.5),
-  s('hh*8').sometimes(rev),
-  note('<c e g b>*4').sound('sawtooth').lpf(sine.range(200,2000))
-)
-```
-
-Monitor browser console for performance warnings.
-
-### 2. Sample Loading Speed
-
-**CDN:** Should load in 1-3 seconds
-**Local:** Should load in <1 second
-
----
-
-## Error Scenarios
-
-### 1. WebSocket Disconnection
-
-1. Stop server (`Ctrl+C`)
-2. Keep client running
-
-Expected:
-- Status shows "Disconnected"
-- Reconnection attempts (with exponential backoff)
-- Eventually: "Failed to connect to server"
-
-### 2. File System Errors
-
-**Non-existent File:**
-Server should respond with error message
-
-**Invalid Filename:**
-Client should validate before sending
-
-**Disk Full:**
-Server logs error, client shows toast
-
----
-
-## Automated Testing
-
-### Run Tests
-
+### Run all tests
 ```bash
 pnpm test
 ```
 
-Tests cover:
-- Component rendering
-- State management (Zustand stores)
-- WebSocket message handling
-- Pattern evaluation
+### Run tests with coverage
+```bash
+pnpm test:coverage
+```
 
-### Test Coverage
+### Run tests in watch mode
+```bash
+pnpm test
+```
+
+### Run tests with UI
+```bash
+pnpm test:ui
+```
+
+## Test Coverage
+
+Current coverage: **100%** on tested files
+
+Coverage thresholds (configured in `vitest.config.ts`):
+- Lines: 70%
+- Functions: 70%
+- Branches: 70%
+- Statements: 70%
+
+## Test Structure
+
+### Store Tests
+Located in `src/store/*.test.ts`
+
+- `use-connection.test.ts` - WebSocket connection state management
+- `use-files.test.ts` - File management state
+- `use-ui.test.ts` - UI state (logs, modals, toasts)
+- `use-strudel.test.ts` - Strudel audio engine state
+
+**Coverage**: 100%
+
+### Component Tests
+Located in `src/components/**/*.test.tsx`
+
+- `ui/button.test.tsx` - Button component variants and interactions
+- `ui/input.test.tsx` - Input component behavior
+
+**Coverage**: 100%
+
+### Utility Tests
+Located in `src/lib/*.test.ts`
+
+- `utils.test.ts` - Utility functions (cn, etc.)
+
+**Coverage**: 100%
+
+## Writing Tests
+
+### Store Tests Example
+
+```typescript
+import { describe, it, expect, beforeEach } from 'vitest'
+import { useMyStore } from './use-my-store'
+
+describe('useMyStore', () => {
+  beforeEach(() => {
+    // Reset store state before each test
+    useMyStore.setState({ /* initial state */ })
+  })
+
+  it('should update state', () => {
+    const { setValue } = useMyStore.getState()
+    setValue('new value')
+    expect(useMyStore.getState().value).toBe('new value')
+  })
+})
+```
+
+### Component Tests Example
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { MyComponent } from './my-component'
+
+describe('MyComponent', () => {
+  it('should render and handle click', async () => {
+    const user = userEvent.setup()
+    render(<MyComponent />)
+
+    const button = screen.getByRole('button')
+    await user.click(button)
+
+    expect(screen.getByText('Clicked')).toBeInTheDocument()
+  })
+})
+```
+
+## CI/CD Integration
+
+Tests run automatically on every push and pull request via GitHub Actions.
+
+See `.github/workflows/ci.yml` for the complete CI/CD pipeline.
+
+## Test Configuration
+
+### vitest.config.ts
+
+```typescript
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      thresholds: {
+        lines: 70,
+        functions: 70,
+        branches: 70,
+        statements: 70,
+      },
+    },
+  },
+})
+```
+
+### Test Setup
+
+The test setup file (`src/test/setup.ts`) configures:
+- jest-dom matchers
+- WebSocket mocks
+- matchMedia polyfill
+- Automatic cleanup after each test
+
+## Best Practices
+
+1. **Isolate Tests**: Each test should be independent
+2. **Use beforeEach**: Reset state before each test
+3. **Test User Behavior**: Focus on what users do, not implementation details
+4. **Descriptive Names**: Use clear, descriptive test names
+5. **Arrange-Act-Assert**: Follow the AAA pattern
+6. **Mock External Dependencies**: Mock WebSocket, fetch, etc.
+
+## Debugging Tests
+
+### Run specific test file
+```bash
+pnpm test src/store/use-connection.test.ts
+```
+
+### Run tests matching pattern
+```bash
+pnpm test -- -t "should send message"
+```
+
+### Debug in VS Code
+Add to `.vscode/launch.json`:
+```json
+{
+  "type": "node",
+  "request": "launch",
+  "name": "Debug Tests",
+  "runtimeExecutable": "pnpm",
+  "runtimeArgs": ["test"],
+  "console": "integratedTerminal"
+}
+```
+
+## Coverage Reports
+
+After running `pnpm test:coverage`, view the HTML coverage report:
 
 ```bash
-pnpm test -- --coverage
+open coverage/index.html
 ```
 
----
-
-## Debugging Tips
-
-### Enable Verbose Logging
-
-Add to `.env`:
-```env
-VITE_DEBUG=true
-```
-
-### Browser DevTools
-
-1. **Console:** View logs, errors, warnings
-2. **Network:** Monitor WebSocket messages
-3. **Application > Storage:** Check persisted state
-4. **Performance:** Profile audio playback
-
-### Server Logs
-
-Server automatically logs:
-- WebSocket connections
-- File operations
-- Errors
-
----
+Coverage reports show:
+- **Statements**: Percentage of executable statements tested
+- **Branches**: Percentage of conditional branches tested
+- **Functions**: Percentage of functions tested
+- **Lines**: Percentage of lines tested
 
 ## Common Issues
 
-### No Sound
+### WebSocket Mocks
 
-**Check:**
-1. Browser console for errors
-2. Volume slider is not at 0
-3. Computer audio is not muted
-4. Sample source is configured correctly
-5. Pattern syntax is valid
+If you see WebSocket-related errors, ensure the mock is properly configured in `src/test/setup.ts`:
 
-### Samples Not Loading
+```typescript
+global.WebSocket = vi.fn() as unknown as typeof WebSocket
+Object.defineProperty(global.WebSocket, 'OPEN', { value: 1 })
+```
 
-**Check:**
-1. `.env` has `VITE_SAMPLES_SOURCE` set
-2. If `local`, samples are downloaded
-3. Network tab shows requests
-4. Console for error messages
+### Async Tests
 
-### WebSocket Not Connecting
+Always use `async`/`await` with user events:
 
-**Check:**
-1. Server is running on correct port
-2. `.env` has correct `VITE_WS_URL`
-3. Firewall not blocking WebSocket
-4. Browser supports WebSocket
+```typescript
+const user = userEvent.setup()
+await user.click(button)  // ✅ Correct
+user.click(button)        // ❌ Wrong
+```
+
+### Store State Isolation
+
+Always reset store state in `beforeEach`:
+
+```typescript
+beforeEach(() => {
+  useMyStore.setState({ /* reset to initial state */ })
+})
+```
+
+## Next Steps
+
+- Add integration tests for complex workflows
+- Add E2E tests with Playwright
+- Increase coverage to 90%+
+- Add visual regression tests
 
 ---
 
-## Success Criteria
-
-All systems working when:
-
-✅ Engine initializes without errors
-✅ Samples load (CDN or local)
-✅ WebSocket connects
-✅ Patterns evaluate successfully
-✅ Audio plays when clicking Play
-✅ Files can be created/saved/deleted
-✅ No console errors
-✅ UI is responsive
-
-If any criteria fails, check relevant section above.
+For more information:
+- [Vitest Documentation](https://vitest.dev/)
+- [Testing Library](https://testing-library.com/)
+- [Zustand Testing](https://docs.pmnd.rs/zustand/guides/testing)

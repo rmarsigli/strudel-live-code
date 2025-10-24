@@ -3,7 +3,7 @@ import { useStrudel } from '@/store'
 
 export function Visualizer() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationRef = useRef<number>()
+  const animationRef = useRef<number | undefined>(undefined)
   const { isPlaying } = useStrudel()
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export function Visualizer() {
         })
       } else {
         bars.forEach((_, index) => {
-          bars[index] = Math.max(0, bars[index] * 0.9)
+          bars[index] = Math.max(0, bars[index]! * 0.9)
         })
 
         const barWidth = width / bars.length

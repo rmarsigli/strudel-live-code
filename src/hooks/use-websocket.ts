@@ -7,7 +7,7 @@ export function useWebSocket() {
   const { status, ws, setStatus, setWebSocket, incrementReconnectAttempts, resetReconnectAttempts, reconnectAttempts } = useConnection()
   const { showToast, addLog } = useUI()
   const { setFiles, addFile, removeFile, updateFile } = useFiles()
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>()
+  const reconnectTimeoutRef = useRef<number | undefined>(undefined)
 
   const connect = useCallback(() => {
     if (ws && ws.readyState === WebSocket.OPEN) {
