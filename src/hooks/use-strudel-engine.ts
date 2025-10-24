@@ -97,13 +97,15 @@ export function useStrudelEngine() {
       addLog('Strudel engine initialized successfully')
 
       try {
-        const samplesUrl = `${window.location.origin}/samples/dirt-samples/strudel.json`
+        const samplesUrl = '/samples/dirt-samples/strudel.json'
         const response = await fetch(samplesUrl, { method: 'HEAD' })
 
         if (response.ok) {
           addLog('Local samples detected, loading...')
           const samplesData = await fetch(samplesUrl).then((r) => r.json())
-          await samples(samplesData, { baseUrl: `${window.location.origin}/samples/dirt-samples/` })
+
+          await samples(samplesData, '/samples/dirt-samples/')
+
           addLog('Local samples loaded successfully')
           showToast('Strudel ready with local samples', 'success')
         } else {
