@@ -28,12 +28,16 @@ const TEST_PATTERNS = [
   'sound("bd sd").sometimes(fast(2))',
   'sound("hh*8").often(slow(0.5))',
 
+  'sound("bd sd hh").note(0).scale("minor")',
+  'sound("bd").legato(0.5).ghost()',
+  'sound("hh*8").shuffle(4).swing()',
+
   'stack(sound("bd*4").fast(2), sound("~ sd").gain(0.8), sound("hh*8").lpf(2000))',
   'cat(sound("bd").crush(4), sound("sd").distort(0.5)).slow(2)',
   'sound("bd sd hh cp").fast(2).gain(0.7).lpf(1500).room(0.3)',
 ]
 
-console.log('\n🧪 TESTING PARSER WITH 23 PATTERNS\n')
+console.log('\n🧪 TESTING PARSER WITH 26 PATTERNS\n')
 console.log('='.repeat(80))
 
 let passed = 0

@@ -220,6 +220,24 @@ export interface AudioEvent {
     pitch?: number
     octave?: number
     pan?: number
+    note?: number
+    freq?: number
+    scale?: string
+    chord?: string
+    arp?: boolean
+    add?: number
+    sub?: number
+    mul?: number
+    div?: number
+    legato?: number
+    orbit?: number
+    struct?: string
+    shuffle?: number
+    scramble?: number
+    rot?: number
+    swing?: number
+    ghost?: boolean
+    quantize?: number
   }
   probability: number
   stereo?: 'left' | 'right' | 'center'

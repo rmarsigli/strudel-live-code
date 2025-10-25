@@ -317,27 +317,104 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
           case 'off':
           case 'jux':
           case 'juxBy':
+          case 'note':
+          case 'n': {
+            const noteValue = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            effects.note = noteValue
+            break
+          }
+          case 'freq': {
+            const freqValue = typeof modifier.args[0] === 'number' ? modifier.args[0] : 440
+            effects.freq = freqValue
+            break
+          }
+          case 'scale': {
+            const scaleName = typeof modifier.args[0] === 'string' ? modifier.args[0] : 'major'
+            effects.scale = scaleName
+            break
+          }
+          case 'chord': {
+            const chordName = typeof modifier.args[0] === 'string' ? modifier.args[0] : 'major'
+            effects.chord = chordName
+            break
+          }
+          case 'arp':
+          case 'arpeggiate': {
+            effects.arp = true
+            break
+          }
+          case 'add': {
+            const value = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            effects.add = value
+            break
+          }
+          case 'sub': {
+            const value = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            effects.sub = value
+            break
+          }
+          case 'mul': {
+            const value = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
+            effects.mul = value
+            break
+          }
+          case 'div': {
+            const value = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
+            effects.div = value
+            break
+          }
+          case 'legato':
+          case 'sustain':
+          case 'hold': {
+            const value = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
+            effects.legato = value
+            break
+          }
+          case 'orbit': {
+            const value = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            effects.orbit = value
+            break
+          }
+          case 'struct':
+          case 'mask': {
+            const pattern = typeof modifier.args[0] === 'string' ? modifier.args[0] : ''
+            effects.struct = pattern
+            break
+          }
+          case 'shuffle': {
+            const n = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
+            effects.shuffle = n
+            break
+          }
+          case 'scramble': {
+            const n = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
+            effects.scramble = n
+            break
+          }
+          case 'rot': {
+            const n = typeof modifier.args[0] === 'number' ? modifier.args[0] : 0
+            effects.rot = n
+            break
+          }
+          case 'swingBy':
+          case 'swing': {
+            const amount = modifier.name === 'swingBy' && typeof modifier.args[0] === 'number' ? modifier.args[0] : 0.5
+            effects.swing = amount
+            break
+          }
+          case 'ghost': {
+            effects.ghost = true
+            break
+          }
+          case 'quantize': {
+            const n = typeof modifier.args[0] === 'number' ? modifier.args[0] : 1
+            effects.quantize = n
+            break
+          }
           case 'chunk':
           case 'segment':
           case 'bite':
           case 'chop':
-          case 'add':
-          case 'sub':
-          case 'mul':
-          case 'div':
-          case 'scale':
-          case 'chord':
-          case 'arp':
-          case 'arpeggiate':
-          case 'note':
-          case 'n':
-          case 'freq':
-          case 'legato':
-          case 'sustain':
-          case 'hold':
-          case 'orbit':
-          case 'struct':
-          case 'mask':
           case 'euclid':
           case 'euclidLegato':
           case 'euclidRot':
@@ -358,15 +435,8 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
           case 'perlin':
           case 'choose':
           case 'wchoose':
-          case 'shuffle':
-          case 'scramble':
-          case 'rot':
-          case 'swingBy':
-          case 'swing':
-          case 'ghost':
           case 'press':
           case 'fit':
-          case 'quantize':
           case 'inhabit':
           case 'splice':
           case 'weave':
