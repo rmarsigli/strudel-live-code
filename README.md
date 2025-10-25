@@ -1,99 +1,80 @@
-<p align="center">
-  <img src="./banner.png" alt="Strudel Studio Banner" />
-</p>
+# Strudel Studio Monorepo
 
-# Strudel Studio
+Live coding music environment built with [Strudel](https://strudel.cc).
 
-Strudel Studio is a modern approach to live coding music with Strudel in your browser.
+## Structure
 
-Edit patterns in real-time and hear changes instantly.
-
-## What is this?
-
-> This is a plug and play package, you don't need to know a lot of code, just git clone and run terminal commands. See the **Configuration** section for more info.
-
-A web-based music live coding tool powered by **[Strudel](https://strudel.cc)**. Write musical patterns using JavaScript-like syntax and create beats, melodies, and experimental sounds in real-time.
+```
+strudel-studio/
+├── apps/
+│   └── studio/          # Main application (React + Vite)
+└── packages/
+    └── visualizer/      # @strudel-studio/visualizer npm package
+```
 
 ## Quick Start
 
 ```bash
+# Install dependencies
 pnpm install
-cp .env.example .env
-pnpm run server   # Terminal 1
-pnpm run dev      # Terminal 2
+
+# Run studio in development mode
+pnpm dev
+
+# Build all packages
+pnpm build
+
+# Run tests
+pnpm test
 ```
 
-Open `http://localhost:5173` in your browser and start coding music!
+## Packages
 
-## How to Use
+### Studio (`apps/studio`)
+Main live coding application with real-time pattern editing and audio visualization.
 
-1. Write your pattern in the editor (try: `s('bd sd bd sd')`)
-2. Press `Ctrl+Enter` to play
-3. Edit the code and save to hear changes
-4. Press `Ctrl+.` to stop
+[→ See apps/studio/README.md for details](apps/studio/README.md)
 
-## Example Patterns
+### Visualizer (`packages/visualizer`)
+Standalone React component for visualizing Strudel patterns.
 
-```javascript
-s('bd sd bd sd')
+[→ See packages/visualizer/README.md for details](packages/visualizer/README.md)
 
-stack(
-  s('bd*4'),
-  s('~ cp ~ cp'),
-  s('[~ hh]*4').gain(0.5)
-)
+**npm package**: `@strudel-studio/visualizer`
 
-note('c4 e4 g4 e4').s('piano')
-```
+## Development
 
-## Configuration
+### Requirements
+- Node.js >= 18
+- pnpm >= 8
 
-### Environment Variables
-
-Copy `.env.example` to `.env` and customize:
+### Workspace Commands
 
 ```bash
-cp .env.example .env
+# Run command in specific package
+pnpm --filter studio dev
+pnpm --filter @strudel-studio/visualizer build
+
+# Run command in all packages
+pnpm -r test
+pnpm -r lint
 ```
 
-Available variables:
+## Code Standards
 
-- `VITE_PORT` - WebSocket server port used by both server and client (default: 3001)
-- `VITE_WS_URL` - (Optional) Full WebSocket URL override for custom hosts/protocols
+- **Files**: kebab-case
+- **Components**: PascalCase
+- **TypeScript**: Single quotes, no semicolons, 4-space indentation
+- **No comments in code** - Documentation goes in `.md` files
+- **Testing**: 90%+ coverage required
 
-See [Configuration Guide](./docs/configuration.md) for advanced configuration.
+## Repository
 
-### Sample Loading
+**GitHub**: [rmarsigli/strudel-studio](https://github.com/rmarsigli/strudel-studio)
 
-By default, the app runs in **synths-only mode**. To add drum samples, download them:
+**npm packages**:
+- `@strudel-studio/visualizer` (publishable)
 
-```bash
-pnpm run download-samples
-```
+## License
 
-The app will automatically detect and use local samples on next reload. No configuration needed!
-
-See [docs/samples-guide.md](./docs/samples-guide.md) for details.
-
-## Features
-
-- ✅ Live coding with Strudel patterns
-- ✅ Real-time code editing with CodeMirror 6
-- ✅ Auto-save (1000ms debounce)
-- ✅ Hot reload from any editor (VSCode, Vim, etc)
-- ✅ WebSocket sync between editor and browser
-- ✅ Keyboard shortcuts (Ctrl+Enter play, Ctrl+. stop)
-- ✅ **Intelligent audio visualizer** - parses your Strudel code and generates precise visualizations
-  - Supports mini-notation, stack, modifiers (fast, slow, gain, speed, delay, room)
-  - Euclidean rhythms, alternation, subgroups, sample selection
-  - Type detection (kick, snare, hihat, bass, synth, perc, fx)
-- ✅ Log console for debugging (collapsible with Ctrl+L)
-- ✅ Local drum samples support
-
-## Learn More
-
-- [Strudel Documentation](https://strudel.cc/learn)
-- [Configuration Guide](./docs/configuration.md)
-- [Samples Configuration](./docs/samples-guide.md)
-- [Testing Guide](./docs/testing.md)
-- [GitHub](https://github.com/rmarsigli/strudel-studio)
+MIT
