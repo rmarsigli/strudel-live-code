@@ -17,6 +17,35 @@ declare global {
   }
 }
 
+/**
+ * Custom hook for managing the Strudel audio engine
+ *
+ * Handles initialization, pattern evaluation, playback control, and volume management
+ * for the Strudel live coding environment. This hook:
+ * - Initializes the Strudel engine on first mount
+ * - Evaluates pattern code and updates the scheduler
+ * - Manages play/pause/stop states
+ * - Controls audio volume
+ * - Provides error handling and logging
+ *
+ * @returns Object containing play, pause, stop, and updateVolume functions
+ *
+ * @example
+ * ```tsx
+ * function Player() {
+ *   const { play, pause, stop, updateVolume } = useStrudelEngine()
+ *
+ *   return (
+ *     <div>
+ *       <button onClick={play}>Play</button>
+ *       <button onClick={pause}>Pause</button>
+ *       <button onClick={stop}>Stop</button>
+ *       <input type="range" onChange={(e) => updateVolume(Number(e.target.value))} />
+ *     </div>
+ *   )
+ * }
+ * ```
+ */
 export function useStrudelEngine() {
   const { patternCode, isPlaying, volume, setPattern, setPlaybackState } = useStrudel()
   const { addLog, showToast } = useUI()

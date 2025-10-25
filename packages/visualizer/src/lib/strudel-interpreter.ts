@@ -237,6 +237,35 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             transforms.degrade = prob
             break
           }
+          case 'append':
+          case 'fastAppend':
+          case 'slowAppend':
+          case 'overlay':
+          case 'layer':
+          case 'superimpose': {
+            const patternArg = modifier.args[0]
+            if (patternArg && typeof patternArg === 'object' && 'type' in patternArg) {
+              const additionalEvents: AudioEvent[] = []
+              const tempEvents = events
+              traverseNode(patternArg as PatternNode, baseTime, baseDuration, effects, {})
+              const newEvents = events.slice(tempEvents.length)
+
+              if (modifier.name === 'append' || modifier.name === 'fastAppend' || modifier.name === 'slowAppend') {
+                const maxTime = Math.max(...events.map(e => e.time + e.duration), 0)
+                for (const evt of newEvents) {
+                  additionalEvents.push({
+                    ...evt,
+                    time: evt.time + maxTime
+                  })
+                }
+              } else {
+                additionalEvents.push(...newEvents)
+              }
+
+              events.push(...additionalEvents)
+            }
+            break
+          }
           case 'stut':
           case 'every':
           case 'whenmod':

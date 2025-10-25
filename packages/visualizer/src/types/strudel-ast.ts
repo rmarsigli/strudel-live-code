@@ -50,6 +50,12 @@ export type PatternNodeType =
   | 'sample_select'
 
 export type ModifierName =
+  | 'append'
+  | 'fastAppend'
+  | 'slowAppend'
+  | 'overlay'
+  | 'layer'
+  | 'superimpose'
   | 'fast'
   | 'slow'
   | 'cpm'

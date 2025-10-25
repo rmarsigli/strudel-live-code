@@ -1,6 +1,27 @@
 import { useEffect, useRef } from 'react'
 import { useStrudel, useUI } from '@/store'
 
+/**
+ * Custom hook for handling keyboard shortcuts in the Strudel editor
+ *
+ * Provides keyboard shortcuts for common actions:
+ * - `Ctrl+Enter` / `Cmd+Enter`: Play/evaluate the current pattern
+ * - `Ctrl+.` / `Cmd+.`: Stop playback
+ * - `Ctrl+S` / `Cmd+S`: Save (currently disabled to prevent browser save dialog)
+ * - `Ctrl+L` / `Cmd+L`: Toggle log panel visibility
+ *
+ * The hook automatically adds and removes event listeners, and includes debouncing
+ * for the play command to prevent accidental double-triggers.
+ *
+ * @example
+ * ```tsx
+ * function Editor() {
+ *   useKeyboardShortcuts() // Just call it, no return value
+ *
+ *   return <CodeMirror />
+ * }
+ * ```
+ */
 export function useKeyboardShortcuts() {
   const { isPlaying, play, stop } = useStrudel()
   const toggleLogPanel = useUI(state => state.toggleLogPanel)

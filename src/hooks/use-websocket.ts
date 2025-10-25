@@ -3,6 +3,32 @@ import { useConnection, useUI, useFiles } from '@/store'
 import { WS_URL, RECONNECT_DELAY, MAX_RECONNECT_ATTEMPTS } from '@/lib/constants'
 import type { WSMessage } from '@/types'
 
+/**
+ * Custom hook for managing WebSocket connection to the server
+ *
+ * Handles WebSocket lifecycle including:
+ * - Initial connection and reconnection logic
+ * - Message handling (file updates, pattern changes, file list)
+ * - Connection status management (connecting, connected, disconnected, error)
+ * - Automatic reconnection with exponential backoff
+ * - File synchronization between server and client
+ *
+ * @returns Object containing connect and disconnect functions
+ *
+ * @example
+ * ```tsx
+ * function App() {
+ *   const { connect, disconnect } = useWebSocket()
+ *
+ *   useEffect(() => {
+ *     connect() // Auto-connect on mount
+ *     return () => disconnect() // Cleanup on unmount
+ *   }, [connect, disconnect])
+ *
+ *   return <div>...</div>
+ * }
+ * ```
+ */
 export function useWebSocket() {
   const { status, ws, setStatus, setWebSocket, incrementReconnectAttempts, resetReconnectAttempts, reconnectAttempts } = useConnection()
   const { showToast, addLog } = useUI()

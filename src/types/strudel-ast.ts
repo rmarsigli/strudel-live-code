@@ -33,6 +33,9 @@ export interface Token {
 export type PatternNodeType =
   | 'sound'
   | 'stack'
+  | 'cat'
+  | 'slowcat'
+  | 'fastcat'
   | 'sequence'
   | 'subgroup'
   | 'alternation'
@@ -56,6 +59,10 @@ export type ModifierName =
   | 'bite'
   | 'chop'
   | 'cpm'
+  | 'pitch'
+  | 'lpf'
+  | 'hpf'
+  | 'pan'
 
 export interface Modifier {
   name: ModifierName
@@ -91,6 +98,21 @@ export interface AudioEvent {
     delay?: number
     reverb?: number
     cut?: number
+    pitch?: number
+    octave?: number
+    tremolo?: number
+    phaser?: number
+    chorus?: number
+    lpf?: number
+    hpf?: number
+    bandf?: number
+    resonance?: number
+    djf?: number
+    vowel?: string
+    crush?: number
+    distort?: number
+    coarse?: number
+    pan?: number
   }
   probability: number
   stereo?: 'left' | 'right' | 'center'

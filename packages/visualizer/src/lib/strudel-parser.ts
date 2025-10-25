@@ -216,16 +216,24 @@ class Parser {
 
       this.expect('PAREN_START')
 
-      const args: (number | string)[] = []
+      const args: (number | string | PatternNode)[] = []
       while (this.currentToken().type !== 'PAREN_END' && this.currentToken().type !== 'EOF') {
         const token = this.currentToken()
-        if (token.type === 'NUMBER') {
+
+        if (token.type === 'FUNCTION') {
+          const pattern = this.parseExpression()
+          if (pattern) {
+            args.push(pattern)
+          }
+        } else if (token.type === 'NUMBER') {
           args.push(parseFloat(token.value))
           this.advance()
         } else if (token.type === 'STRING') {
           args.push(token.value)
           this.advance()
         } else if (token.type === 'OPERATOR' && token.value === '/') {
+          this.advance()
+        } else {
           this.advance()
         }
 

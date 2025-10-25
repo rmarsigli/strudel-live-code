@@ -1,5 +1,38 @@
 import type { Token, TokenType } from '@/types/strudel-ast'
 
+/**
+ * Tokenizes Strudel code into an array of tokens for parsing
+ *
+ * This lexer converts raw Strudel code text into a structured sequence of tokens
+ * that can be consumed by the parser. It handles:
+ * - Function names (sound, s, stack, fast, slow, etc.)
+ * - String literals (single, double, and backtick quotes)
+ * - Numbers (integers, decimals, negatives)
+ * - Special characters (brackets, parentheses, operators)
+ * - Comments (// style line comments)
+ * - Whitespace (spaces, tabs, newlines)
+ *
+ * @param code - The Strudel code string to tokenize
+ * @returns Array of tokens representing the code structure with position information
+ *
+ * @example
+ * ```ts
+ * const tokens = tokenize('s("bd sd")')
+ * // Returns: [
+ * //   { type: 'FUNCTION', value: 's', position: 0, line: 1, column: 1 },
+ * //   { type: 'PAREN_START', value: '(', position: 1, line: 1, column: 2 },
+ * //   { type: 'STRING', value: 'bd sd', position: 2, line: 1, column: 3 },
+ * //   { type: 'PAREN_END', value: ')', position: 8, line: 1, column: 9 },
+ * //   { type: 'EOF', value: '', position: 9, line: 1, column: 10 }
+ * // ]
+ * ```
+ *
+ * @example
+ * ```ts
+ * const tokens = tokenize('s("bd").fast(2).gain(0.8)')
+ * // Tokenizes chained modifiers: s("bd").fast(2).gain(0.8)
+ * ```
+ */
 export function tokenize(code: string): Token[] {
   const tokens: Token[] = []
   let position = 0
@@ -8,7 +41,11 @@ export function tokenize(code: string): Token[] {
 
   const keywords = new Set([
     'sound', 's', 'stack', 'fast', 'slow', 'rev', 'gain', 'speed',
-    'delay', 'room', 'cut', 'every', 'jux', 'juxBy', 'bite', 'chop', 'cpm'
+    'delay', 'room', 'cut', 'every', 'jux', 'juxBy', 'bite', 'chop', 'cpm',
+    'cat', 'slowcat', 'fastcat', 'vowel', 'stut', 'pitch', 'octave', 'echo',
+    'tremolo', 'phaser', 'chorus', 'lpf', 'hpf', 'lcutoff', 'hcutoff',
+    'bandf', 'cutoff', 'resonance', 'djf', 'crush', 'distort', 'coarse', 'pan',
+    'ply', 'bpm', 'velocity', 'hurry', 'accelerate', 'legato', 'sustain', 'hold'
   ])
 
   while (position < code.length) {
