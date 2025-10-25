@@ -209,7 +209,9 @@ class Parser {
     const name = funcToken.value
     this.advance()
 
-    if (this.currentToken().type !== 'PAREN_START') return null
+    if (this.currentToken().type !== 'PAREN_START') {
+      return { name, args: [] }
+    }
     this.advance()
 
     const args: (number | string)[] = []

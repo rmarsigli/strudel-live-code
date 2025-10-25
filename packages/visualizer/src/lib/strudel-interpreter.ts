@@ -84,6 +84,67 @@ function generateEuclideanRhythm(pulses: number, steps: number): boolean[] {
   return pattern
 }
 
+type ModifierEffects = {
+  fastFactor: number
+  slowFactor: number
+  gain: number
+  speed: number
+  [key: string]: number | boolean | string | undefined
+}
+
+function applyFunctionReference(
+  funcRef: { name: string; args: (number | string)[] },
+  effects: ModifierEffects
+): void {
+  switch (funcRef.name) {
+    case 'fast': {
+      const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+      effects.fastFactor *= factor
+      break
+    }
+    case 'slow': {
+      const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+      effects.slowFactor *= factor
+      break
+    }
+    case 'gain':
+    case 'velocity': {
+      const value = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+      effects.gain *= value
+      break
+    }
+    case 'speed': {
+      const value = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+      effects.speed *= value
+      break
+    }
+    case 'lpf':
+    case 'hpf':
+    case 'bandf':
+    case 'crush':
+    case 'distort':
+    case 'coarse': {
+      const value = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 0
+      effects[funcRef.name] = value
+      break
+    }
+    case 'rev':
+      effects.rev = true
+      break
+    case 'palindrome':
+      effects.palindrome = true
+      break
+    case 'degrade':
+      effects.degrade = 0.5
+      break
+    case 'degradeBy': {
+      const prob = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 0.5
+      effects.degrade = prob
+      break
+    }
+  }
+}
+
 /**
  * Interprets an AST into audio events for visualization
  *
@@ -269,49 +330,86 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
           case 'sometimes': {
             const funcRef = modifier.args[0]
             if (funcRef && typeof funcRef === 'object' && 'name' in funcRef && Math.random() < 0.5) {
-              if (funcRef.name === 'fast') {
-                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
-                fastFactor *= factor
-              } else if (funcRef.name === 'slow') {
-                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
-                slowFactor *= factor
-              }
+              const tempEffects: ModifierEffects = { fastFactor, slowFactor, gain, speed }
+              applyFunctionReference(funcRef as { name: string; args: (number | string)[] }, tempEffects)
+              fastFactor = tempEffects.fastFactor
+              slowFactor = tempEffects.slowFactor
+              gain = tempEffects.gain
+              speed = tempEffects.speed
+              Object.assign(effects, tempEffects)
             }
             break
           }
           case 'often': {
             const funcRef = modifier.args[0]
             if (funcRef && typeof funcRef === 'object' && 'name' in funcRef && Math.random() < 0.75) {
-              if (funcRef.name === 'fast') {
-                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
-                fastFactor *= factor
-              } else if (funcRef.name === 'slow') {
-                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
-                slowFactor *= factor
-              }
+              const tempEffects: ModifierEffects = { fastFactor, slowFactor, gain, speed }
+              applyFunctionReference(funcRef as { name: string; args: (number | string)[] }, tempEffects)
+              fastFactor = tempEffects.fastFactor
+              slowFactor = tempEffects.slowFactor
+              gain = tempEffects.gain
+              speed = tempEffects.speed
+              Object.assign(effects, tempEffects)
             }
             break
           }
           case 'rarely': {
             const funcRef = modifier.args[0]
             if (funcRef && typeof funcRef === 'object' && 'name' in funcRef && Math.random() < 0.25) {
-              if (funcRef.name === 'fast') {
-                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
-                fastFactor *= factor
-              } else if (funcRef.name === 'slow') {
-                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
-                slowFactor *= factor
-              }
+              const tempEffects: ModifierEffects = { fastFactor, slowFactor, gain, speed }
+              applyFunctionReference(funcRef as { name: string; args: (number | string)[] }, tempEffects)
+              fastFactor = tempEffects.fastFactor
+              slowFactor = tempEffects.slowFactor
+              gain = tempEffects.gain
+              speed = tempEffects.speed
+              Object.assign(effects, tempEffects)
+            }
+            break
+          }
+          case 'almostNever': {
+            const funcRef = modifier.args[0]
+            if (funcRef && typeof funcRef === 'object' && 'name' in funcRef && Math.random() < 0.1) {
+              const tempEffects: ModifierEffects = { fastFactor, slowFactor, gain, speed }
+              applyFunctionReference(funcRef as { name: string; args: (number | string)[] }, tempEffects)
+              fastFactor = tempEffects.fastFactor
+              slowFactor = tempEffects.slowFactor
+              gain = tempEffects.gain
+              speed = tempEffects.speed
+              Object.assign(effects, tempEffects)
+            }
+            break
+          }
+          case 'almostAlways': {
+            const funcRef = modifier.args[0]
+            if (funcRef && typeof funcRef === 'object' && 'name' in funcRef && Math.random() < 0.9) {
+              const tempEffects: ModifierEffects = { fastFactor, slowFactor, gain, speed }
+              applyFunctionReference(funcRef as { name: string; args: (number | string)[] }, tempEffects)
+              fastFactor = tempEffects.fastFactor
+              slowFactor = tempEffects.slowFactor
+              gain = tempEffects.gain
+              speed = tempEffects.speed
+              Object.assign(effects, tempEffects)
+            }
+            break
+          }
+          case 'never':
+            break
+          case 'always': {
+            const funcRef = modifier.args[0]
+            if (funcRef && typeof funcRef === 'object' && 'name' in funcRef) {
+              const tempEffects: ModifierEffects = { fastFactor, slowFactor, gain, speed }
+              applyFunctionReference(funcRef as { name: string; args: (number | string)[] }, tempEffects)
+              fastFactor = tempEffects.fastFactor
+              slowFactor = tempEffects.slowFactor
+              gain = tempEffects.gain
+              speed = tempEffects.speed
+              Object.assign(effects, tempEffects)
             }
             break
           }
           case 'stut':
           case 'every':
           case 'whenmod':
-          case 'almostNever':
-          case 'almostAlways':
-          case 'never':
-          case 'always':
           case 'someCycles':
           case 'someCyclesBy':
           case 'off':
