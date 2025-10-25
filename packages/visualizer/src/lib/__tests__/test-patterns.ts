@@ -50,11 +50,15 @@ export const TEST_PATTERNS = {
     'sound("bd").fast(0.1).gain(0)',
   ],
 
+  patternCombinators: [
+    'sound("bd").append(sound("sd"))',
+    'sound("bd").overlay(sound("hh*4"))',
+    'sound("bd sd").layer(sound("hh*8"))',
+  ],
+
   notImplemented: [
     'sound("bd sd").sometimes(fast(2))',
     'sound("hh*8").phaser(0.8).pan(sine)',
-    'sound("bd").append(sound("sd"))',
-    'sound("bd").overlay(sound("hh*4"))',
   ],
 }
 

@@ -23,12 +23,15 @@ const TEST_PATTERNS = [
 
   'sound("bd(3,8)").gain(0.8)',
 
+  'sound("bd").append(sound("sd"))',
+  'sound("bd").overlay(sound("hh*4"))',
+
   'stack(sound("bd*4").fast(2), sound("~ sd").gain(0.8), sound("hh*8").lpf(2000))',
   'cat(sound("bd").crush(4), sound("sd").distort(0.5)).slow(2)',
   'sound("bd sd hh cp").fast(2).gain(0.7).lpf(1500).room(0.3)',
 ]
 
-console.log('\n🧪 TESTING PARSER WITH 19 PATTERNS\n')
+console.log('\n🧪 TESTING PARSER WITH 21 PATTERNS\n')
 console.log('='.repeat(80))
 
 let passed = 0
