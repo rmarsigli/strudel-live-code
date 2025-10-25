@@ -56,8 +56,13 @@ export const TEST_PATTERNS = {
     'sound("bd sd").layer(sound("hh*8"))',
   ],
 
-  notImplemented: [
+  higherOrderFunctions: [
     'sound("bd sd").sometimes(fast(2))',
+    'sound("hh*8").often(slow(0.5))',
+    'sound("bd sd hh").rarely(fast(4))',
+  ],
+
+  notImplemented: [
     'sound("hh*8").phaser(0.8).pan(sine)',
   ],
 }

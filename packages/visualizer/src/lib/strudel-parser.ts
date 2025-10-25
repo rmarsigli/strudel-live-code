@@ -1,4 +1,4 @@
-import type { Token, PatternNode, ParserContext, ParseResult, Modifier } from '../types/strudel-ast'
+import type { Token, PatternNode, ParserContext, ParseResult, Modifier, FunctionReference } from '../types/strudel-ast'
 import { tokenize } from './strudel-lexer'
 
 /**
@@ -202,6 +202,40 @@ class Parser {
     }
   }
 
+  private parseFunctionReference(): FunctionReference | null {
+    const funcToken = this.currentToken()
+    if (funcToken.type !== 'FUNCTION') return null
+
+    const name = funcToken.value
+    this.advance()
+
+    if (this.currentToken().type !== 'PAREN_START') return null
+    this.advance()
+
+    const args: (number | string)[] = []
+    while (this.currentToken().type !== 'PAREN_END' && this.currentToken().type !== 'EOF') {
+      const token = this.currentToken()
+      if (token.type === 'NUMBER') {
+        args.push(parseFloat(token.value))
+        this.advance()
+      } else if (token.type === 'STRING') {
+        args.push(token.value)
+        this.advance()
+      } else {
+        this.advance()
+      }
+
+      if (this.currentToken().type === 'COMMA') {
+        this.advance()
+      }
+    }
+
+    if (this.currentToken().type !== 'PAREN_END') return null
+    this.advance()
+
+    return { name, args }
+  }
+
   private parseModifiers(): Modifier[] {
     const modifiers: Modifier[] = []
 
@@ -216,14 +250,32 @@ class Parser {
 
       this.expect('PAREN_START')
 
-      const args: (number | string | PatternNode)[] = []
+      const args: (number | string | PatternNode | FunctionReference)[] = []
       while (this.currentToken().type !== 'PAREN_END' && this.currentToken().type !== 'EOF') {
         const token = this.currentToken()
 
         if (token.type === 'FUNCTION') {
-          const pattern = this.parseExpression()
-          if (pattern) {
-            args.push(pattern)
+          const savePos = this.context.position
+          this.advance()
+
+          if (this.currentToken().type === 'PAREN_START') {
+            this.context.position = savePos
+            const maybeFunctionRef = this.parseFunctionReference()
+            if (maybeFunctionRef) {
+              args.push(maybeFunctionRef)
+            } else {
+              this.context.position = savePos
+              const pattern = this.parseExpression()
+              if (pattern) {
+                args.push(pattern)
+              }
+            }
+          } else {
+            this.context.position = savePos
+            const pattern = this.parseExpression()
+            if (pattern) {
+              args.push(pattern)
+            }
           }
         } else if (token.type === 'NUMBER') {
           args.push(parseFloat(token.value))

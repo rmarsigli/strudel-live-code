@@ -266,12 +266,48 @@ export function interpret(ast: PatternNode | null, _cps: number = 0.5): AudioEve
             }
             break
           }
+          case 'sometimes': {
+            const funcRef = modifier.args[0]
+            if (funcRef && typeof funcRef === 'object' && 'name' in funcRef && Math.random() < 0.5) {
+              if (funcRef.name === 'fast') {
+                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+                fastFactor *= factor
+              } else if (funcRef.name === 'slow') {
+                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+                slowFactor *= factor
+              }
+            }
+            break
+          }
+          case 'often': {
+            const funcRef = modifier.args[0]
+            if (funcRef && typeof funcRef === 'object' && 'name' in funcRef && Math.random() < 0.75) {
+              if (funcRef.name === 'fast') {
+                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+                fastFactor *= factor
+              } else if (funcRef.name === 'slow') {
+                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+                slowFactor *= factor
+              }
+            }
+            break
+          }
+          case 'rarely': {
+            const funcRef = modifier.args[0]
+            if (funcRef && typeof funcRef === 'object' && 'name' in funcRef && Math.random() < 0.25) {
+              if (funcRef.name === 'fast') {
+                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+                fastFactor *= factor
+              } else if (funcRef.name === 'slow') {
+                const factor = typeof funcRef.args[0] === 'number' ? funcRef.args[0] : 1
+                slowFactor *= factor
+              }
+            }
+            break
+          }
           case 'stut':
           case 'every':
           case 'whenmod':
-          case 'sometimes':
-          case 'often':
-          case 'rarely':
           case 'almostNever':
           case 'almostAlways':
           case 'never':

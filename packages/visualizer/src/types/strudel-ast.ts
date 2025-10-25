@@ -162,9 +162,14 @@ export type ModifierName =
   | 'splice'
   | 'weave'
 
+export interface FunctionReference {
+  name: string
+  args: (number | string)[]
+}
+
 export interface Modifier {
   name: ModifierName
-  args: (number | string | PatternNode)[]
+  args: (number | string | PatternNode | FunctionReference)[]
 }
 
 export interface PatternNode {
